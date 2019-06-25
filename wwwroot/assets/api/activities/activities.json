@@ -1,0 +1,18 @@
+[
+  {
+    "title": "Logged In",
+    "name": "msgs",
+    "data": [
+      {
+        "title": "John Doe",
+        "image": "assets/img/avatars/4.png",
+        "time": "2 minutes ago",
+        "subject": "Msed quia non numquam eius modi tempora",
+        "message": "Hello again and thanks for being a part of the newsletter.",
+        "status": "unread",
+        "type": "message"
+      }
+      
+    ]
+  }
+]

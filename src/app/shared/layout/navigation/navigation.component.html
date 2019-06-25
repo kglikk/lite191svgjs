@@ -1,0 +1,164 @@
+<aside id="left-panel">
+
+  <!-- User info -->
+  <sa-login-info></sa-login-info>
+  <!-- end user info -->
+
+  <nav>
+    <!-- NOTE: Notice the gaps after each icon usage <i></i>..
+    Please note that these links work a bit different than
+    traditional href="" links. See documentation for details.
+    -->
+
+    <ul saSmartMenu>
+
+      <li routerLinkActive="active">
+        <a routerLink="/home" title="Home">
+          <i class="fa fa-lg fa-fw fa-home"></i>
+          <span class="menu-item-parent">{{'Home' | i18n}}</span>
+        </a>
+      </li>
+   
+
+      <li *ngIf="auth.isAuthenticated()">
+        <a href="">
+          <i class="fa fa-lg fa-fw fa-table"></i>
+          <span class="menu-item-parent">{{'Data' | i18n}}</span>
+        </a>
+        <ul>
+          <li routerLinkActive="active">
+            <a routerLink="/data/buses">{{'Buses' | i18n}}</a>
+          </li>
+          <li routerLinkActive="active">
+            <a routerLink="/data/externalgrids">{{'External Grids' | i18n}}</a>
+          </li>
+          <li routerLinkActive="active">
+            <a routerLink="/data/overheadlines">{{'Power Lines' | i18n}}</a>
+          </li>
+          <li routerLinkActive="active">
+            <a routerLink="/data/twophasetransformers">{{'Two-Winding Transformers' | i18n}}</a>
+          </li>
+
+        </ul>
+      </li>
+
+      <li *ngIf="auth.isAuthenticated()">
+        <a href="">
+          <i class="fa fa-lg fa-fw fa-calculator"></i>
+          <span class="menu-item-parent">{{'Calculation' | i18n}}</span>
+        </a>
+        <ul>
+          <li routerLinkActive="active">
+            <a routerLink="/calculation/loadflow">{{'Load Flow' | i18n}}</a>
+          </li>
+        </ul>
+      </li>
+
+
+      <li *ngIf="auth.isAuthenticated()"  routerLinkActive="active">
+        <a routerLink="/diagram" title="Diagram">
+          <i class="fa fa-lg fa-fw fa-random"></i>
+          <span class="menu-item-parent">{{'Diagram' | i18n}}</span>
+        </a>
+        <ul>
+          <li>
+            <a >
+                
+                
+                <!-- symbol sieci zewnętrznej 'external grid' -->
+                <div class="draggableDIV"  draggable="true" (dragstart)="dragstart_handler($event)" style="height: 32px; width: 32px ; background-color: transparent">
+                  <svg  id="extGrid"  width="32px" height="32px" viewbox="0 0 32 32"> 
+                    <g id="extGridGroup" attr="unselected">           
+                      <path  id ="pathExtGrid"  d="M2,2,30,2,30,30,2,30,2,2.1,29.5,16,2,30M30,30,2.5,16,30,2" style="stroke-width: 1;" fill="#ffffff" stroke="#000000"></path>
+                     <!-- <circle cx="16" cy="30" r="1.5" fill="#000000" stroke="#000000" style="stroke-width: 1;"></circle> -->
+                    </g>
+                  </svg>
+                </div> 
+
+                <!-- elementy mogą być przenoszone przy zastosowaniu drag&drop z HTML5 -->
+                    <!-- symbol szyny zbiorczej 'busbar' -->
+                    <div id="busbarDIV" draggable="true" (dragstart)="dragstart_handler($event)" style="height: 32px; width: 32px ; background-color: transparent" >
+                      <svg id="busbar" width="32px" height="32px" viewbox="0 0 32 32"> 
+                        <g id="busbarGroup" attr="unselected">
+                          <path d="M2,16,30,16" style="stroke-width: 1;" fill="#ffffff" stroke="#000000"></path>  
+                         <!--
+                          <circle cx="2" cy="16" r="1.5" fill="#000000" stroke="#000000" style="stroke-width: 1;"></circle> 
+                          <circle cx="16" cy="16" r="1.5" fill="#000000" stroke="#000000" style="stroke-width: 1;"></circle>        
+                          <circle cx="30" cy="16" r="1.5" fill="#000000" stroke="#000000" style="stroke-width: 1;"></circle> 
+                         -->
+                        </g>
+                      </svg>   
+                    </div>
+                
+                 <!-- symbol transformatora 'busbar' -->
+                <div id="transformerDIV" draggable="true" (dragstart)="dragstart_handler($event)" style="height: 32px; width: 32px ; background-color: transparent" >
+                  <svg id="transformer" width="32px" height="32px" viewbox="0 0 32 32">
+                    <g class="transformerGroup" attr="unselected">
+                    <ellipse
+                       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.5;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:8.69999981;stroke-opacity:1"
+                       id="path4549"
+                       cx="16.421936"
+                       cy="11.81227"
+                       rx="7.3051696"
+                       ry="7.5892749" />
+                    <ellipse
+                       style="opacity:1;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.5;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:8.69999981;stroke-opacity:1"
+                       id="path4549-9"
+                       cx="16.137833"
+                       cy="20.0829"
+                       rx="7.3051696"
+                       ry="7.5892749" />
+                    <path
+                       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+                       d="m 16.477832,4.29044 -0.0073,-3.67856"
+                       id="path4570"
+                       inkscape:connector-curvature="0" />
+                    <path
+                       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+                       d="m 16.199209,31.59539 -0.0073,-3.93563"
+                       id="path4570-4"
+                       inkscape:connector-curvature="0" />
+                    <path
+                       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.5;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:8.69999981;stroke-opacity:1"
+                       d="m 15.565112,19.231651 c -2.108644,-0.31277 -3.941809,-1.471167 -5.061448,-3.198387 l -0.195377,-0.3014 0.122372,-0.176582 c 0.41595,-0.600217 1.213556,-1.352708 1.920168,-1.811559 2.037767,-1.323259 4.596879,-1.489266 6.792445,-0.440619 1.018644,0.486526 2.195436,1.494871 2.818723,2.41525 0.152473,0.225152 0.277225,0.424658 0.277225,0.443348 0,0.09143 -0.551967,0.736056 -0.988087,1.153963 -0.956354,0.916417 -2.094546,1.524488 -3.40056,1.816726 -0.319495,0.07149 -0.603387,0.09487 -1.280996,0.105485 -0.478795,0.0075 -0.930804,0.0047 -1.004465,-0.0062 z"
+                       id="path4591"
+                       inkscape:connector-curvature="0" />
+                    <path
+                       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.5;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:8.69999981;stroke-opacity:1"
+                       d="M 15.609755,27.533439 C 14.572166,27.446253 13.47382,27.095744 12.586229,26.568558 9.0735057,24.482172 7.9092548,19.793264 10.008483,16.186936 l 0.138611,-0.238125 0.231331,0.336233 c 0.750809,1.09128 1.785643,1.979758 2.94297,2.526748 1.713705,0.809953 3.595498,0.927175 5.378692,0.335055 0.485384,-0.161174 1.190202,-0.495426 1.610154,-0.763597 0.637167,-0.406879 1.37562,-1.07491 1.823764,-1.649842 l 0.261465,-0.335438 0.184592,0.393009 c 0.475081,1.01148 0.680746,1.886055 0.717066,3.04926 0.02708,0.867309 -0.03407,1.442588 -0.236327,2.223382 -0.525062,2.026915 -1.959291,3.810855 -3.810769,4.739955 -1.134027,0.569071 -2.439312,0.830776 -3.640277,0.729863 z"
+                       id="path4593"
+                       inkscape:connector-curvature="0"/>
+                    <path
+                       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.5;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:8.69999981;stroke-opacity:1"
+                       d="m 15.469722,19.205233 c -0.618534,-0.113332 -1.108153,-0.24932 -1.586255,-0.440571 -0.92123,-0.368513 -1.707201,-0.878658 -2.389563,-1.550979 -0.397127,-0.391282 -0.641111,-0.687949 -0.965886,-1.174444 l -0.204833,-0.306829 0.07445,-0.105349 c 0.383093,-0.542118 0.939559,-1.109223 1.544449,-1.573977 1.034662,-0.794958 2.300194,-1.281772 3.630236,-1.396448 0.246942,-0.02129 0.899322,-0.02092 1.138146,6.56e-4 0.849601,0.07674 1.648676,0.292691 2.405916,0.650211 0.664052,0.313522 1.428132,0.871694 2.059128,1.504224 0.387421,0.388363 0.680938,0.753022 0.939467,1.167175 l 0.113821,0.182337 -0.0522,0.08612 c -0.127269,0.209993 -0.691598,0.835647 -1.041025,1.154151 -0.733937,0.668986 -1.546989,1.160217 -2.438098,1.473051 -0.444484,0.156042 -0.964247,0.281953 -1.310041,0.317353 -0.229555,0.0235 -1.802517,0.03442 -1.917712,0.01332 z"
+                       id="path4605"
+                       inkscape:connector-curvature="0"/>
+                    <path
+                       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.5;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:8.69999981;stroke-opacity:1"
+                       d="m 15.469722,19.20523 c -1.188177,-0.1951 -2.342317,-0.67945 -3.25932,-1.36781 -0.478858,-0.35946 -0.988481,-0.85692 -1.344615,-1.31252 -0.110317,-0.14112 -0.519367,-0.73051 -0.534665,-0.77038 -0.0044,-0.0115 0.05475,-0.10561 0.131435,-0.20922 0.378837,-0.51184 0.921248,-1.05515 1.470669,-1.47311 1.020216,-0.7761 2.183939,-1.23716 3.489145,-1.38237 0.295967,-0.0329 1.10718,-0.0326 1.409371,6.1e-4 1.116737,0.12266 2.138356,0.48442 3.017938,1.06869 0.71695,0.47624 1.454718,1.15752 1.922733,1.77552 0.140784,0.1859 0.421137,0.60847 0.421137,0.63477 0,0.0576 -0.274838,0.39725 -0.636653,0.7868 -0.757117,0.81518 -1.617999,1.41469 -2.598992,1.80991 -0.303047,0.1221 -0.529878,0.19588 -0.875992,0.28495 -0.425432,0.10947 -0.587014,0.13375 -0.994369,0.14941 -0.358961,0.0138 -1.541547,0.0173 -1.617822,0.005 z"
+                       id="path4607"
+                       inkscape:connector-curvature="0" />
+                       <!--
+                         <circle cx="16.477832" cy="2" r="1.5" fill="#000000" stroke="#000000" style="stroke-width: 1;"></circle> 
+                       -->
+                   </g>         
+                   
+                  </svg>
+                </div>
+              </a>        
+          </li>
+        </ul>
+      </li>      
+
+      <li routerLinkActive="active">
+        <a target="_blank" href="https://electrisim.com/page-knowledgebase.html" title="Documentation">
+          <i class="fa fa-lg fa-fw fa-book"></i>
+             <span class="menu-item-parent">{{'Documentation' | i18n}}</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <sa-minify-menu></sa-minify-menu>
+
+</aside>

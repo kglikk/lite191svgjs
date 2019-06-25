@@ -1,0 +1,37 @@
+{
+    "Projects": "Projekty",
+    "Msgs": "Wiadomości",
+    "Notify": "Powiadomienie",
+    "Tasks": "Zadania",
+    "Recent projects": "Ostatnie projekty",
+    "Find reports and more": "Szukaj",
+    "Dashboard": "Pulpit",  
+
+    "Inbox": "Skrzynka odbiorcza",
+    "Dygraphs": "Dygraphs",
+    "Tables": "Tabele",
+    "Data": "Dane",
+
+    "Expand": "Rozwiń",
+    "File": "Plik",
+    "Delete": "Usuń",    
+    "Calendar": "Kalendarz",
+    "Gallery": "Galería",
+    
+    "Miscellaneous": "Inne",
+    "Other Pages": "Inne strony",    
+    "Profile": "Profil", 
+ 
+
+    "Error 404": "Błąd 404",
+    "Error 500": "Błąd 500",
+   
+   
+    "Home": "Start",
+    "Documentation": "Dokumentacja",
+
+ 
+    "My Profile": "Mój profil",
+    "Page Header": "Nagłówek"
+   
+}

@@ -1,0 +1,43 @@
+ 
+<div *ngIf="show;else otherContent" id="content">
+
+
+  <div  id="svgAreaDiv"  style="width: 100%; height: 2000px">
+
+
+    <svg id="svgArea" (drop)="drop_handler($event);" (dragover)="dragover_handler($event);">
+     
+
+    </svg>
+
+    <externalgrid-form></externalgrid-form>
+
+  </div>
+
+
+  <ul class="custom-menu">
+    <li (click)="rotate()">Rotate</li>
+    <li (click)="deleteObject()">Delete</li>
+  </ul>
+
+  <ul class="custom-menu-polyline">
+
+    <li (click)="deletePolyline()">Delete</li>
+  </ul>
+
+  <ul class="custom-menu-busbar">
+
+    <li (click)="deleteBusbar()">Delete</li>
+  </ul>
+
+  <ul class="custom-menu-draggablenested">
+
+    <li (click)="deleteObjectsInDraggableNested()">Delete</li>
+  </ul>
+
+
+
+</div>
+
+<ng-template #otherContent>Please open or create project in the Home tab first</ng-template>
+

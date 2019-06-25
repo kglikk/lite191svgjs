@@ -1,0 +1,94 @@
+<button type="button" class="btn btn-primary" (click)="openModal(template)" style="margin-top: 10px; margin-bottom: 10px">
+  Calculate</button>
+
+<ng-template #template>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Load Flow Parameters</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+
+    <div class="bs-example">
+      <ul class="nav nav-tabs">
+        <li class="active">
+          <a data-toggle="tab" href="#sectionA">Basic Description</a>
+        </li>
+
+        <li class="dropdown">
+          <a data-toggle="dropdown" class="dropdown-toggle" href="#">Iteration control
+            <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu">
+            <li>
+              <a data-toggle="tab" href="#dropdown1">Max. number of iterations for:</a>
+            </li>
+            <li>
+              <a data-toggle="tab" href="#dropdown2">Max. acceptable load flow error for:</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+
+
+      <div class="tab-content">
+        <div id="sectionA" class="tab-pane fade in active">
+          <p>AC Load Flow, balanced, positive sequence</p>
+          <p>Newton-Raphson method</p>
+        </div>
+        <div id="dropdown1" class="tab-pane fade">
+          <h3>Max. number of iterations for:</h3>
+          <form [formGroup]="form" (ngSubmit)="saveAndExecute()" class="form-horizontal">
+            <div *ngIf="form.errors" class="alert alert-danger">At least one input parameter is invalid </div>
+
+            <div formGroupName="iteration">
+              <div class="form-group">
+                <label for="iterNR">Newton-Raphson iteration:</label>
+                <input formControlName="iterNR" type="text" class="form-control" id="iterNR">
+                <div *ngIf="iterNR.touched && iterNR.invalid" class="alert alert-danger">It is required</div>
+              </div>
+              <div class="form-group">
+                <label for="outIter">Outer loop</label>
+                <input formControlName="outIter" type="text" class="form-control" id="outIter">
+                <div *ngIf="outIter.touched && outIter.invalid" class="alert alert-danger">It is required</div>
+              </div>
+              <div class="form-group">
+                <label for="steps">Number of steps</label>
+                <input type="text" class="form-control" id="steps" value="1">
+              </div>
+            </div>
+            <!--
+            <button type="submit" class="btn btn-default">Execute</button>
+            -->
+          </form>
+        </div>
+        <div id="dropdown2" class="tab-pane fade">
+          <h2>Max. acceptable load flow error for:</h2>
+          <form class="form-horizontal">
+
+
+            <div class="form-group">
+              <label for="errNodes">Nodes</label>
+              <input type="text" class="form-control" id="errNodes" value="1">
+            </div>
+            <div class="form-group">
+              <label for="errorModelEquations">Model Equations [kVA]</label>
+              <input type="text" class="form-control" id="errorModelEquations" value="0,1">
+
+            </div>
+            <!--<button type="submit" class="btn btn-default">Submit</button>-->
+          </form>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" (click)="modalRef.hide()">Close</button>
+    <button type="submit" class="btn btn-primary" (click)="saveAndExecute()">Execute</button>
+   
+  </div>
+</ng-template>

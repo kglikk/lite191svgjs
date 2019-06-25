@@ -1,0 +1,27 @@
+
+
+<button type="button"  id="przycisk" class="btn btn-info" (click)="openModal(template)">
+  Select type</button>
+
+<ng-template #template>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Select line type</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+      <select class="form-control" [(ngModel)]="selectedlinetype.linetype" name="linetypes_id">
+          <option value=""></option>
+          <option *ngFor="let l of linetypes" value="{{l.id}}">{{l.name}}</option>
+        </select>
+
+
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" (click)="modalRef.hide()">Close</button>
+    <button type="submit" class="btn btn-primary" (click)="selectLineType()">Ok</button>
+
+  </div>
+</ng-template>

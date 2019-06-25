@@ -1,0 +1,22 @@
+<button type="button" class="btn btn-primary" (click)="openModal(template)">Open Project</button>
+
+<ng-template #template >
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Open Project</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body" >
+    
+    <select id="openProject" class="form-control" [(ngModel)]="openedProject.project" name="project_id">
+      <option value=""></option>
+      <option *ngFor="let p of projects" value="{{p.id}}">{{p.name}}</option>
+    </select>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" (click)="modalRef.hide()">Close</button>
+    <button type="button" class="btn btn-primary" (click)="openProject()">Open</button>
+  </div>
+</ng-template>

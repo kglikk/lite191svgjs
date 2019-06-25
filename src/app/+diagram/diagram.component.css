@@ -1,0 +1,131 @@
+html, body {
+    margin: 2px;    
+}
+
+#extGridDIV{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width : 32px;
+    height : 32px;     
+}
+
+#busbarDIV{
+    position: absolute;
+    top: 0px;
+    left: 32px;
+    width : 32px;
+    height : 32px;      
+}
+#loadDIV{
+    position: absolute;
+    top: 0px;
+    left: 64px;
+    width : 32px;
+    height : 32px;      
+}
+#transformerDIV{
+    position: absolute;
+    top: 0px;
+    left: 96px;         
+}
+
+
+#svgArea{
+    position: absolute;   
+    height: 100%;
+    width:100%;      
+    background: lightgrey; 
+}
+
+
+.custom-menu {
+    display: none; 
+  /*  z-index: 1000;*/
+    position: absolute;
+    overflow: hidden;
+    border: 1px solid #CCC;
+    white-space: nowrap;
+    font-family: sans-serif;
+    background: #FFF;
+    color: #333;
+    border-radius: 5px;
+}
+
+.custom-menu-polyline {
+    display: none; 
+  /*  z-index: 1000;*/
+    position: absolute;
+    overflow: hidden;
+    border: 1px solid #CCC;
+    white-space: nowrap;
+    font-family: sans-serif;
+    background: #FFF;
+    color: #333;
+    border-radius: 5px;
+}
+
+.custom-menu-busbar {
+    display: none; 
+  /*  z-index: 1000;*/
+    position: absolute;
+    overflow: hidden;
+    border: 1px solid #CCC;
+    white-space: nowrap;
+    font-family: sans-serif;
+    background: #FFF;
+    color: #333;
+    border-radius: 5px;
+}
+
+.custom-menu-draggablenested {
+    display: none; 
+  /*  z-index: 1000;*/
+    position: absolute;
+    overflow: hidden;
+    border: 1px solid #CCC;
+    white-space: nowrap;
+    font-family: sans-serif;
+    background: #FFF;
+    color: #333;
+    border-radius: 5px;
+}
+
+.custom-menu li {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.custom-menu-polyline li {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.custom-menu-busbar li {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.custom-menu-draggablenested li {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.custom-menu li:hover {
+    background-color: #DEF;
+}
+
+.custom-menu-polyline li:hover {
+    background-color: #DEF;
+}
+
+.custom-menu-busbar li:hover {
+    background-color: #DEF;
+}
+
+.custom-menu-draggablenested li:hover {
+    background-color: #DEF;
+}
+
+
+
