@@ -23,6 +23,8 @@ namespace lite191svgjs.Models
         public DbSet<Bus> Buses { get; set; }
 
         public DbSet<Project> Projects { get; set; }
+       
+        public DbSet<Load> Loads { get; set; }
 
         //zamiania z nazwy mnogiej na pojedynczą w bazie
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -33,6 +35,7 @@ namespace lite191svgjs.Models
             modelBuilder.Entity<Project>().ToTable("Project");
             modelBuilder.Entity<Bus>().ToTable("Bus");
             modelBuilder.Entity<LineGlobal>().ToTable("LineGlobal");
+            modelBuilder.Entity<Load>().ToTable("Load");
 
         }
     }

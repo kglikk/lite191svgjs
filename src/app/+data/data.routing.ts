@@ -26,6 +26,11 @@ export const routes:Routes = [
     loadChildren: 'app/+data/twophasetransformers/twophasetransformers.module#TwoPhaseTransformersModule',
     data: {pageTitle: 'Two Phase Transformers'}
   },
+  {
+    path: 'load',
+    loadChildren: 'app/+data/loads/loads.module#LoadsModule',
+    data: {pageTitle: 'Loads'}
+  },
 
 ];
 

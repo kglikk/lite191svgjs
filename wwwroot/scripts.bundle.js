@@ -11449,7 +11449,7 @@ function mutationObserver(object) {
                        
             //przesuwaj węzeł który znajduje się na polilinii
             poliliniaPolaczonaId = SVG.get(draggableNested.node.childNodes[1].id)
-            circlePoliliniiId = poliliniaPolaczonaId.attr('nodeId')
+            circlePoliliniiId = poliliniaPolaczonaId.attr('busbarNode')
             circlePolilinii = SVG.get(circlePoliliniiId)
             console.log(circlePolilinii)
             busbar = SVG.get(circlePolilinii.node.parentNode.id)
@@ -11465,13 +11465,7 @@ function mutationObserver(object) {
 
           busbarPath = busbar.first()
           
-          prawyKraniecPrzenoszeniaX = (busbarPath.width() + parseInt(lewyKraniecBusbarX)) - wartoscPoczatkowaCircleX 
-          console.log('busbarPath.width(): ' + busbarPath.width())
-          console.log('parseInt(lewyKraniecBusbarX): '+ parseInt(lewyKraniecBusbarX))
-          console.log('wartoscPoczatkowaCircleX: '+ wartoscPoczatkowaCircleX)
-
-          console.log(prawyKraniecPrzenoszeniaX)
-           // granicaBusbarPrawa =  
+          prawyKraniecPrzenoszeniaX = (busbarPath.width() + parseInt(lewyKraniecBusbarX)) - wartoscPoczatkowaCircleX                    
             //przesuwanie tylko w osi x, wzdłuż polilinii
             draggableNested.draggable(function (x, y) {
               
@@ -11483,8 +11477,7 @@ function mutationObserver(object) {
               {
                 ustawioneCx =  (x + busbar.attr('x') + wartoscPoczatkowaCircleX + circlePolilinii.transform('e')) - (x + busbar.attr('x') + wartoscPoczatkowaCircleX + circlePolilinii.transform('e')) % gridSize
                 circlePolilinii.attr('cx', ustawioneCx) 
-              }
-           
+              }           
               if(x <= 0 )//&&  x > lewyKraniecPrzenoszeniaX)
               {                
                 ustawioneCx =  (x + busbar.attr('x') + wartoscPoczatkowaCircleX + circlePolilinii.transform('e')) + 10 - (x + busbar.attr('x') + wartoscPoczatkowaCircleX + circlePolilinii.transform('e')) % gridSize
@@ -11497,19 +11490,10 @@ function mutationObserver(object) {
               }
 
               if(x >= prawyKraniecPrzenoszeniaX )
-              {                
-                
-                x = prawyKraniecPrzenoszeniaX - prawyKraniecPrzenoszeniaX % gridSize 
-        
-                
-                
-                console.log(x)
+              {  
+                x = prawyKraniecPrzenoszeniaX - prawyKraniecPrzenoszeniaX % gridSize        
                 circlePolilinii.attr('cx', prawyKraniecPrzenoszeniaX - prawyKraniecPrzenoszeniaX % gridSize  + wartoscPoczatkowaCircleX)
               }
-
-        
-              
-           
           
               return {
                 x: nestedInsideContainer(this, x, y).x - x % gridSize
@@ -11527,14 +11511,10 @@ function mutationObserver(object) {
               }
             })
 
-          }
-
-          
+          }         
 
           // przy przenoszeniu aktualizuj polilinie 
           updatePolylinePoints(draggableNested)
-
-
         }
 
         // //jesli po zmianie attr obiekt jest niewybrany
@@ -11974,19 +11954,41 @@ function makeDraggableConnection(firstObject, secondObject, polyline, polylineBa
       punkt = pointArray[i].split(',')
       array[i] = punkt
     }
+    
+
+    objectNode = SVG.get(polyline.attr('objectNode'))
+    nodeX = objectNode.attr('cx')
+    nodeY = objectNode.attr('cy')
 
     // okresl pozycje wezla wewnatrz grupy
+    /*
     this.each(function (i, children) {
       if (this.type == 'circle') {
         nodeX = this.attr('cx')
         nodeY = this.attr('cy')
         nodeR = this.attr('r')
       }
-    })
+    }) */
+    //nodeX = polyline.attr('objectNode')
 
+    // zmien wspolrzedna x z pierwszego punktu polilinii
+    // dla grupy: array[0][0] = matrix.extract().x + nodeX
+    array[0][0] = this.attr('x') + nodeX// + rotationCorrectionX
+
+    // zmien wspolrzedna y z pierwszego punktu polilinii
+    // dla grupy: array[0][0] = matrix.extract().y + nodeY
+    array[0][1] = this.attr('y') + nodeY// + rotationCorrectionY
+
+    // aktualizuj polilinie
+    polyline.plot(array)
+
+    //aktualizuj tło polilinii
+    polylineBackground.plot(array)
+
+    /*
     var rotationCorrectionX,
       rotationCorrectionY
-
+    
     if (Math.round(this.transform('rotation')) == 90) {
       rotationCorrectionX = nodeR - this.bbox().width / 2
       rotationCorrectionY = -this.bbox().height / 2
@@ -12003,20 +12005,9 @@ function makeDraggableConnection(firstObject, secondObject, polyline, polylineBa
       rotationCorrectionX = 0
       rotationCorrectionY = 0
     }
+    */
 
-    // zmien wspolrzedna x z pierwszego punktu polilinii
-    // dla grupy: array[0][0] = matrix.extract().x + nodeX
-    array[0][0] = this.attr('x') + nodeX + rotationCorrectionX
-
-    // zmien wspolrzedna y z pierwszego punktu polilinii
-    // dla grupy: array[0][0] = matrix.extract().y + nodeY
-    array[0][1] = this.attr('y') + nodeY + rotationCorrectionY
-
-    // aktualizuj polilinie
-    polyline.plot(array)
-
-    //aktualizuj tło polilinii
-    polylineBackground.plot(array)
+    
   })
 
   // przenos drugi element z polilinia
@@ -12036,6 +12027,13 @@ function makeDraggableConnection(firstObject, secondObject, polyline, polylineBa
       array[i] = punkt
     }
 
+    objectNode = SVG.get(polyline.attr('objectNode'))
+    nodeX = objectNode.attr('cx')
+    nodeY = objectNode.attr('cy')
+   // alert(this)
+    console.log('tutaj second: ' + this)
+
+    /*
     // okresl pozycje wezla wewnatrz grupy
     this.each(function (i, children) {
       if (this.type == 'circle') {
@@ -12043,11 +12041,26 @@ function makeDraggableConnection(firstObject, secondObject, polyline, polylineBa
         nodeY = this.attr('cy')
         nodeR = this.attr('r')
       }
-    })
+    }) 
+    */
 
+    // zmien wspolrzedna x z ostatniego punktu polilinii
+    // dla grupy: array[array.length-1][0] = matrix.extract().x + nodeX
+    array[array.length - 1][0] = this.attr('x') + nodeX + rotationCorrectionX
+
+    // zmien wspolrzedna y z ostatniego punktu polilinii
+    // dla grupy: array[array.length-1][0] = matrix.extract().x + nodeX
+    array[array.length - 1][1] = this.attr('y') + nodeY + rotationCorrectionY
+
+    // aktualizuj polilinie
+    polyline.plot(array)
+
+    //aktualizuj tło polilinii
+    polylineBackground.plot(array)
+
+    /*
     var rotationCorrectionX,
       rotationCorrectionY
-    console.log('nodeR: ' + nodeR)
 
     if (Math.round(this.transform('rotation')) == 90) {
       rotationCorrectionX = nodeR - this.bbox().width / 2
@@ -12065,20 +12078,7 @@ function makeDraggableConnection(firstObject, secondObject, polyline, polylineBa
       rotationCorrectionX = 0
       rotationCorrectionY = 0
     }
-
-    // zmien wspolrzedna x z ostatniego punktu polilinii
-    // dla grupy: array[array.length-1][0] = matrix.extract().x + nodeX
-    array[array.length - 1][0] = this.attr('x') + nodeX + rotationCorrectionX
-
-    // zmien wspolrzedna y z ostatniego punktu polilinii
-    // dla grupy: array[array.length-1][0] = matrix.extract().x + nodeX
-    array[array.length - 1][1] = this.attr('y') + nodeY + rotationCorrectionY
-
-    // aktualizuj polilinie
-    polyline.plot(array)
-
-    //aktualizuj tło polilinii
-    polylineBackground.plot(array)
+    */
   })
 }
 
@@ -12100,7 +12100,7 @@ function simpleStringify(object) {
   return JSON.stringify(simpleObject) // returns cleaned up JSON
 }
 
-function showCustomMenuExtGrid(object, offsetX, offsetY) {
+function showCustomMenu(object, offsetX, offsetY) {
 
   //schowaj poprzednio używane menu
   $('.custom-menu').hide()
@@ -12155,12 +12155,79 @@ var doubleClickExternalGrid = function (ev) {
   })
 }
 
+var doubleClickTwoPhaseTransformer = function (ev) {
+
+  // formularz do wpisywania danych
+  element = document.getElementById('twophasetransformerform')
+  element.style.display = 'block' // show
+  element.style.left = ev.offsetX + 'px'
+  element.style.top = ev.offsetY + 'px'
+
+  // ustawiam abym wiedzial ktory element mam wykorzystywac w zapisywaniu danych formularza
+  $('#twophasetransformerform').attr('data', SVG.get(ev.target.id).parent().attr('id'))
+
+  // jesli nie jest nacisniety shift
+  if (this.attr('class') == 'noshift') {
+    var elements = SVG.get('svgArea').select('svg')
+    // wszystkie inne elementy odznacz jesli sa zaznaczone
+    elements.each(function () {
+      if (this.attr('attr') == 'selected') {
+        console.log('zmiana na unselected')
+        this.attr({
+          attr: 'unselected',
+          opacity: 1
+        })
+      }
+    })
+  }
+
+  console.log('zmiana na selected')
+  // zaznacz klikniety element 
+  this.attr({
+    attr: 'selected',
+    opacity: 0.5
+  })
+}
+
+var doubleClickLoad = function (ev) {
+
+  // formularz do wpisywania danych
+  element = document.getElementById('loadform')
+  element.style.display = 'block' // show
+  element.style.left = ev.offsetX + 'px'
+  element.style.top = ev.offsetY + 'px'
+
+  // ustawiam abym wiedzial ktory element mam wykorzystywac w zapisywaniu danych formularza
+  $('#loadform').attr('data', SVG.get(ev.target.id).parent().attr('id'))
+
+  // jesli nie jest nacisniety shift
+  if (this.attr('class') == 'noshift') {
+    var elements = SVG.get('svgArea').select('svg')
+    // wszystkie inne elementy odznacz jesli sa zaznaczone
+    elements.each(function () {
+      if (this.attr('attr') == 'selected') {
+        console.log('zmiana na unselected')
+        this.attr({
+          attr: 'unselected',
+          opacity: 1
+        })
+      }
+    })
+  }
+
+  console.log('zmiana na selected')
+  // zaznacz klikniety element 
+  this.attr({
+    attr: 'selected',
+    opacity: 0.5
+  })
+}
+
+//naciśnięcie węzła i rysowanie polilinii
 drawAction = false
-var clickNodeInExternalGrid = function (ev) {
+var clickNode = function (ev) {
   var gridSize = 10
-
   thisNode = this
-
 
   // nacisnelismy pierwszy wezel i rysujemy
   if (this.attr('class') == 'free' && drawAction == false) {
@@ -12182,6 +12249,9 @@ var clickNodeInExternalGrid = function (ev) {
     polyline.attr('id', firstObject.attr('id'))
 
     polylineId = polyline.attr('id')
+
+    //dodaj nowy atrybut polilinii, który będzie określał nazwę początkowego węzła
+    polyline.attr('objectNode', this.attr('id'))
 
     polyline.stylePolyline()
 
@@ -12249,7 +12319,6 @@ var clickNodeInExternalGrid = function (ev) {
       // jesli jestesmy podczas rysowania
       if (drawAction == true) {
 
-
         // ESCAPE key pressed
         if (e.keyCode == 27) {
           $('#svgArea').off('mousemove')
@@ -12290,6 +12359,9 @@ var clickNodeInExternalGrid = function (ev) {
     secondObjectId = secondObject.attr('id')
     polylineId = firstObjectId + '_' + secondObjectId
     polyline.attr('id', polylineId)
+
+    //dodaj nowy atrybut polilinii, który będzie określał nazwę węzła obiektu. Przy przenoszeniu obiektu polilinia będzie trzymała się tego węzła   
+    polyline.attr('objectNode', this.attr('id'))
 
 
     // skoncz rysowanie
@@ -12354,14 +12426,91 @@ var clickNodeInExternalGrid = function (ev) {
 
     // przy przenoszeniu polaczonych elementow polilinia powinna sie zmieniac
     makeDraggableConnection(firstObject, secondObject, polyline, polylineBackground)
-  }
+  } 
+
+  // nacisnelismy drugi raz - na zajęty węzeł znajdujący się na busbar
+  if (this.attr('class') == 'busy' && drawAction == true && this.parent().attr('data') == 'busbar'  ) {
+    console.log('klikniecie')
+    /*
+    console.log('nacisnelismy drugi wezel')
+    secondObject = this.parent()
+    // do wezla dochodzi linia ustaw wezel jako zajety
+    this.attr('class', 'busy')
+
+    // w nazwie polilinii bedzie znajdowac sie nazwa elementu
+    firstObjectId = polyline.attr('id')
+    secondObjectId = secondObject.attr('id')
+    polylineId = firstObjectId + '_' + secondObjectId
+    polyline.attr('id', polylineId)
+
+    //dodaj nowy atrybut polilinii, który będzie określał nazwę węzła obiektu. Przy przenoszeniu obiektu polilinia będzie trzymała się tego węzła   
+    polyline.attr('objectNode', this.attr('id'))
+
+
+    // skoncz rysowanie
+    drawAction = false
+
+    // aktualizuj polilinie
+    points = polyline.attr('points')
+    points += ' ' + nodePosition(this).x + ',' + nodePosition(this).y
+    polyline.attr('points', points)
+
+    // utworz tło polilinii żeby łatwo sie klikalo
+    var polylineBackground = polyline.clone()
+
+    polyline.attr({
+      //'pointer-events': 'none'
+    })
+
+
+
+    polylineBackground.attr({
+      'id': polyline.attr('id') + '_background',
+      'data': 'background',
+      'background': 'background',
+      // 'pointer-events': 'all', 
+      // 'stroke': 'yellow',
+      'stroke-width': 8,
+      // 'fill': 'red',
+      'opacity': 0
+      //'visibility': 'hidden'
+    })
+
+
+    // przypisz do tła polilinii prawy przycisk          
+    polylineBackground.contextMenu()
+
+    //polylineBackground.off('click')
+    polylineBackground.on('click', clickPolylineBackground)
+
+
+    
+    // wykasuj wszystkie pomocnicze linie ktore zostaly narysowane
+    lineSet = SVG.get('svgArea').select('line')
+    lineSet.each(function () {
+      this.remove()
+    })
+
+    // przestajemy rysować polilinię
+    $('#svgArea').off('mousemove')
+    $('#svgArea').off('mousedown')
+
+    mutationObserver(polyline)
+    mutationObserver(polylineBackground)
+
+    // przy przenoszeniu polaczonych elementow polilinia powinna sie zmieniac
+    makeDraggableConnection(firstObject, secondObject, polyline, polylineBackground)
+    */
+  } 
 
 
 }
 
+
+
 var rightClick = function (ev) {
   ev.preventDefault()
-  showCustomMenuExtGrid(this, ev.offsetX, ev.offsetY)
+  showCustomMenu(this, ev.offsetX, ev.offsetY)
 }
 
 //kliknięcie tła polilinii
@@ -12453,10 +12602,10 @@ var clickPolylineBackground = function (ev) {
 }
 
 // funkcja okreslajaca prawy przycisk
-var contextMenuExternalGrid = function (ev) {
+var contextMenu = function (ev) {
   //ev.preventDefault()
   console.log('jestem w contextMenuExternalGrid ')
-  showCustomMenuExtGrid(this, ev.offsetX, ev.offsetY)
+  showCustomMenu(this, ev.offsetX, ev.offsetY)
 
 }
 
@@ -12498,6 +12647,7 @@ var clickBusbar = function (ev) {
     //jeśli busbar nie ma żadnego prostokąta to dodaj prostokąt
     jestRect = false
     circleCx = 0
+    circlePosX = 0
     
     
     //sprawdź czy busbar zawiera jakiś prostokąt i kółko
@@ -12509,7 +12659,8 @@ var clickBusbar = function (ev) {
       if (element.type == 'circle') {
 
         //położenie kółka na osi x
-        circleCx =  element.attr('cx') - this.attr('x') 
+       // circleCx =  element.attr('cx') - this.attr('x') 
+        circlePosX = element.attr('cx') + element.transform('x')
         
       }
     });
@@ -12538,8 +12689,8 @@ var clickBusbar = function (ev) {
       rightRect.draggable(function (x, y) {
 
         //busbar nie przejdzie przez kółko
-        if(x < circleCx) {
-           x = circleCx          
+        if(x < circlePosX) {
+           x = circlePosX          
         }
            
         return {
@@ -12565,9 +12716,9 @@ var clickBusbar = function (ev) {
         // busbarPathArray.value[1][1] jest to wartość x prawej krawędzi polilinii
         busbarPathArray.value[1][1] = e.detail.event.offsetX - busbarParent.attr('x')
         busbarPathArray.value[1][1] = busbarPathArray.value[1][1] - busbarPathArray.value[1][1] % gridSize
-        if(busbarPathArray.value[1][1] < circleCx) {
-          console.log('circleCx: '+circleCx)
-          busbarPathArray.value[1][1] = circleCx          
+        if(busbarPathArray.value[1][1] < circlePosX) {
+          console.log('circleCx: '+circlePosX)
+          busbarPathArray.value[1][1] = circlePosX          
         }
 
         //aktualizuj polilinie
@@ -12605,7 +12756,7 @@ var clickBusbar = function (ev) {
     polyline.attr('id', polylineId)
 
     //przypisz do polilinii numer węzła aby mógł być usunięty przy usunięciu linii
-    polyline.attr('nodeId', node.attr('id'))
+    polyline.attr('busbarNode', node.attr('id'))
 
 
     // skoncz rysowanie
@@ -12794,7 +12945,7 @@ function makeDraggableConnectionWithBusbar(firstObject, busbar, busbarNodeX, bus
 
   // przenos pierwszy element z polilinia
   firstObject.on('dragmove', function (e) {
-
+    console.info('firstobject')
     // wez aktualne koordynaty polilinii
     points = polyline.attr('points')
 
@@ -12809,15 +12960,22 @@ function makeDraggableConnectionWithBusbar(firstObject, busbar, busbarNodeX, bus
       array[i] = punkt
     }
 
+    objectNode = SVG.get(polyline.attr('objectNode'))
+    nodeX = objectNode.attr('cx')
+    nodeY = objectNode.attr('cy')
+
     // okresl pozycje wezla wewnatrz grupy
+    /*   
     this.each(function (i, children) {
-      if (this.type == 'circle') {
+  
+      if (this.type == 'circle' && this.attr('class') =='busy') {
         nodeX = this.attr('cx')
         nodeY = this.attr('cy')
         nodeR = this.attr('r')
       }
-    })
+    }) */
 
+    /*
     var rotationCorrectionX,
       rotationCorrectionY
 
@@ -12836,15 +12994,15 @@ function makeDraggableConnectionWithBusbar(firstObject, busbar, busbarNodeX, bus
     if (Math.round(this.transform('rotation')) == 0) {
       rotationCorrectionX = 0
       rotationCorrectionY = 0
-    }
+    }*/
 
     // zmien wspolrzedna x z pierwszego punktu polilinii
     // dla grupy: array[0][0] = matrix.extract().x + nodeX
-    array[0][0] = this.attr('x') + nodeX + rotationCorrectionX
+    array[0][0] = this.attr('x') + nodeX// + rotationCorrectionX
 
     // zmien wspolrzedna y z pierwszego punktu polilinii
     // dla grupy: array[0][0] = matrix.extract().y + nodeY
-    array[0][1] = this.attr('y') + nodeY + rotationCorrectionY
+    array[0][1] = this.attr('y') + nodeY// + rotationCorrectionY
 
     // aktualizuj polilinie
     polyline.plot(array)
@@ -12855,6 +13013,7 @@ function makeDraggableConnectionWithBusbar(firstObject, busbar, busbarNodeX, bus
 
   // przenos drugi element z polilinia
   busbar.on('dragmove', function (e) {
+    console.info('busbar')
 
     var gridSize = 10
 
@@ -12884,7 +13043,7 @@ function makeDraggableConnectionWithBusbar(firstObject, busbar, busbarNodeX, bus
 
     // okresl pozycje wezla wewnatrz grupy
     this.each(function (i, children) {
-      if (this.type == 'circle') {
+        if (this.type == 'circle' && this.attr('class') =='busy') {
 
 
         /*
@@ -12944,6 +13103,7 @@ function makeDraggableConnectionWithBusbar(firstObject, busbar, busbarNodeX, bus
 
 function showCustomMenuBusbar(object, offsetX, offsetY) {
 
+  /*
   $('.custom-menu-busbar').hide();
   $('.custom-menu-busbar').show();
 
@@ -12951,9 +13111,10 @@ function showCustomMenuBusbar(object, offsetX, offsetY) {
   $('.custom-menu-busbar').attr('data', object);
 
   $('.custom-menu-busbar').css({
-    left: offsetX, //SVG.get(object).attr('x') + object.bbox().width - $('.draggableDIV').parent().width(),    
-    top: offsetY //SVG.get(object).attr('y') - $('.draggableDIV').parent().height(),
+    left: offsetX,     
+    top: offsetY 
   })
+  */
 
 }
 ;
@@ -13122,12 +13283,12 @@ SVG.Busbar = SVG.invent({
 
     //przypisanie elementowi odpowiedniej metody
     this.on('dblclick', doubleClickExternalGrid)
-    this.on('contextmenu', contextMenuExternalGrid)
+    this.on('contextmenu', contextMenu)
 
     //przypisanie wezlom odpowiednich metod  
     this.select('circle').on('mouseover', mouseoverNode)
     this.select('circle').on('mouseout', mouseoutNode)
-    this.select('circle').on('click', clickNodeInExternalGrid)
+    this.select('circle').on('click', clickNode)
 
     // przenos element w obszarze modelowania - svgArea
     var gridSize = 10
@@ -13143,6 +13304,55 @@ SVG.Busbar = SVG.invent({
     // Create an element   
     externalgrid: function () {
       return this.put(new SVG.ExternalGrid)
+    }
+  }
+})
+
+;SVG.Load = SVG.invent({
+  // Define the type of element that should be created
+  create: function () {
+    SVG.Nested.call(this) // call super constructor 
+
+    temp = this.attr('id')
+    this.attr({
+      'id': 'load' + temp,
+      'attr': 'unselected', // element moze by zaznaczany
+      'class': 'noshift' // nie jest wcisniety shift na poczatku      
+    })   
+
+  //this.svg('')
+  this.path('M20,0, 20,10, 30,10, 20,30, 10,10, 20,10').style('stroke-width: 0.5;cursor:pointer;fill: #ffffff; stroke:#000000')
+  this.circle(4).attr({
+    'cx': 20,
+    'cy': 2,
+    'stroke-width': 0.5,
+    'class': 'free'
+  })
+  
+  
+    //przypisanie elementowi odpowiedniej metody
+    this.on('dblclick', doubleClickLoad)
+    this.on('contextmenu', contextMenu)
+
+    //przypisanie wezlom odpowiednich metod  
+    this.select('circle').on('mouseover', mouseoverNode)
+    this.select('circle').on('mouseout', mouseoutNode)
+    this.select('circle').on('click', clickNode)
+
+    // przenos element w obszarze modelowania - svgArea
+    var gridSize = 10
+    this.draggable(function (x, y) {
+      return {
+        x: insideContainer(this, x, y).x - x % gridSize,
+        y: insideContainer(this, x, y).y - y % gridSize
+      }
+    })
+  }, // Specify from which existing class this shape inherits
+  inherit: SVG.Nested, // Add custom methods to invented shape
+  construct: {
+    // Create an element   
+    load: function () {
+      return this.put(new SVG.Load)
     }
   }
 })
@@ -13180,607 +13390,64 @@ function showCustomMenuPolyline(object, offsetX, offsetY) {
   })
 
 }
-;// import { first } from "rxjs/operators"
-
-/*
-SVG.ExternalGrid = SVG.invent({
+;SVG.TwoPhaseTransformer = SVG.invent({
   // Define the type of element that should be created
   create: function () {
-    SVG.Nested.call(this) // call super constructor
+    SVG.Nested.call(this) // call super constructor 
 
     temp = this.attr('id')
-    this.attr('id', 'extgrid' + temp)
-    this.attr('attr', 'unselected') // element moze by zaznaczany
-    this.attr('class', 'noshift') // nie jest wcisniety shift na poczatku
+    this.attr({
+      'id': 'twophasetransformer' + temp,
+      'attr': 'unselected', // element moze by zaznaczany
+      'class': 'noshift' // nie jest wcisniety shift na poczatku      
+    })   
 
-    this.path('M0,0,20,0,20,20,0,20,0,0.2,19.5,10,0,20M20,20,0.5,10,20,0').style('stroke-width: 0.5;cursor:pointer;fill: #ffffff; stroke:#000000')
-    var node = this.circle(4).attr({
-      'cx': 10,
-      'cy': 18,
-      'stroke-width': 0.5,
-      'class': 'free'
-    })
+   this.svg('<path style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;baseline-shift:baseline;text-anchor:start;white-space:normal;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.97050416;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" d="m 20.018331,-0.55216884 c -4.482749,0 -8.138347,3.74280394 -8.138347,8.36183934 0,4.6190325 3.655598,8.3618375 8.138347,8.3618375 4.482753,0 8.138236,-3.742805 8.138236,-8.3618375 0,-4.6190354 -3.655483,-8.36183934 -8.138236,-8.36183934 z m 0,0.9954285 c 3.984014,0 7.192092,3.29897044 7.192092,7.36641084 0,4.0674385 -3.208078,7.3664095 -7.192092,7.3664095 -3.984012,0 -7.192205,-3.298971 -7.192205,-7.3664095 0,-4.0674404 3.208193,-7.36641084 7.192205,-7.36641084 z" /><path style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;baseline-shift:baseline;text-anchor:start;white-space:normal;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.76422524;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" d="m 20.665892,23.715008 -1.305022,0.0057 0.0017,1.192536 0.0071,5.455949 0.0017,1.192547 1.30502,-0.0057 -0.0017,-1.192543 -0.0071,-5.45595 z"/><path style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;baseline-shift:baseline;text-anchor:start;white-space:normal;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.97050416;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" d="m 20.018569,7.3084439 c -4.482749,0 -8.138348,3.7428071 -8.138348,8.3618381 0,4.619034 3.655599,8.361839 8.138348,8.361839 4.482753,0 8.138356,-3.742805 8.138356,-8.361839 0,-4.619031 -3.655603,-8.3618381 -8.138356,-8.3618381 z m 0,0.9954301 c 3.984018,0 7.19209,3.298969 7.19209,7.366408 0,4.067441 -3.208072,7.366411 -7.19209,7.366411 -3.984013,0 -7.192087,-3.29897 -7.192087,-7.366411 0,-4.067439 3.208074,-7.366408 7.192087,-7.366408 z" /><path style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;baseline-shift:baseline;text-anchor:start;white-space:normal;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.73709571;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" d="m 20.672782,-7.7993421 -1.30502,0.00509 0.0018,1.1561436 0.0071,5.2891657 0.0017,1.15614727 1.305019,-0.005091 -0.0017,-1.15614357 -0.0071,-5.2891696 -0.0017,-1.1561398 z"/><path style="fill:#ffffff;stroke-width:0.09675148" d="M 13.325965,10.367088 C 12.73957,8.8299012 12.736721,6.9409021 13.318265,5.3028369 13.70183,4.2225492 14.140912,3.5381474 15.025076,2.6424183 c 1.223052,-1.2390536 2.478018,-1.86747694 4.18355,-2.09491424 1.406579,-0.1875703 3.10059,0.164855 4.377252,0.91069274 0.712898,0.416472 2.105361,1.8078317 2.528342,2.5263358 1.113816,1.892014 1.349665,4.4049132 0.597739,6.3687724 L 26.609557,10.620929 25.905724,9.8824514 C 25.075686,9.011554 24.257209,8.4075693 23.353853,7.999337 20.987192,6.9298237 18.337824,7.0490254 16.042736,8.3282815 15.558331,8.5982808 14.998557,9.0440702 14.364585,9.6647154 13.453238,10.556905 13.409626,10.586397 13.325965,10.367088 Z" /><path style="fill:#ffffff;stroke-width:0.09675148" d="m 18.804757,15.018428 c -1.796143,-0.353817 -3.431769,-1.366121 -4.457505,-2.758788 -0.405663,-0.550778 -0.406282,-0.548107 0.331875,-1.432135 0.892794,-1.0692166 2.292588,-1.9312441 3.695712,-2.2758945 0.801008,-0.1967536 2.450278,-0.2024309 3.263908,-0.01123 1.543597,0.3627379 2.972903,1.2939967 3.971812,2.5878185 0.414575,0.536969 0.431029,0.581466 0.305081,0.825021 -0.07321,0.141571 -0.503925,0.63053 -0.957134,1.08653 -0.689015,0.693264 -0.974803,0.902843 -1.74444,1.279249 -0.506235,0.247584 -1.182094,0.516466 -1.501907,0.597519 -0.846353,0.214494 -2.110881,0.258818 -2.907402,0.101908 z"/><path style="fill:#ffffff;stroke-width:0.09675148" d="m 18.763586,22.875404 c -1.489767,-0.291313 -2.532879,-0.860527 -3.695501,-2.016596 -0.791207,-0.786748 -0.992112,-1.054694 -1.378557,-1.838569 -0.248804,-0.504681 -0.525753,-1.221861 -0.615441,-1.593732 -0.299099,-1.240145 -0.187182,-3.18864 0.248714,-4.330169 l 0.104399,-0.273392 0.483473,0.576677 c 1.40518,1.676067 3.877974,2.816972 6.105505,2.816972 2.237133,0 4.694258,-1.133677 6.105498,-2.816972 0.481972,-0.574882 0.483768,-0.575909 0.577755,-0.329528 0.458325,1.20146 0.57259,3.095153 0.262242,4.346021 -0.809689,3.263454 -3.759793,5.599332 -7.014097,5.553722 -0.41534,-0.0059 -0.948136,-0.04832 -1.183988,-0.09444 z"/>')
+   this.circle(4).attr({
+    'side': 'HV',
+    'cx': 20.008873,
+    'cy': -5.8,
+    'stroke-width': 0.5,
+    'class': 'free'
+  })
 
-    // nodeAnimate(node) 
+  this.circle(4).attr({
+    'side': 'LV',
+    'cx': 20.010738,
+    'cy': 30.2,
+    'stroke-width': 0.5,
+    'class': 'free'
+  })
+  
 
+  
+  this.width(20)
+
+    //przypisanie elementowi odpowiedniej metody
+    this.on('dblclick', doubleClickTwoPhaseTransformer)
+    this.on('contextmenu', contextMenu)
+    //przypisanie wezlom odpowiednich metod  
     this.select('circle').on('mouseover', mouseoverNode)
     this.select('circle').on('mouseout', mouseoutNode)
-    this.select('circle').on('click', clickNodeInExternalGrid)
-    this.on('dblclick', doubleClickExternalGrid)
+    this.select('circle').on('click', clickNode)  
+
+    // przenos element w obszarze modelowania - svgArea
+    var gridSize = 10
+    this.draggable(function (x, y) {
+      return {
+        x: insideContainer(this, x, y).x - x % gridSize,
+        y: insideContainer(this, x, y).y - y % gridSize
+      }
+    })
   }, // Specify from which existing class this shape inherits
   inherit: SVG.Nested, // Add custom methods to invented shape
-  extend: {
-    // przenos element wewnatrz obszaru
-    dragInsideContainer: function () {
-      var gridSize = 10
-      this.draggable(function (x, y) {
-        return {
-          x: insideContainer(this, x, y).x - x % gridSize,
-          y: insideContainer(this, x, y).y - y % gridSize
-
-        }
-      })
-    },
-    // funkcja okreslajaca prawy przycisk
-    contextMenu: function () {
-      this.on('contextmenu', function (e) {
-        event.preventDefault()
-        showCustomMenuExtGrid(this, e.offsetX, e.offsetY)
-      })
-    }
-
-  }, // Add method to parent elements
   construct: {
-    // Create a rounded element   
-    externalgrid: function () {
-      return this.put(new SVG.ExternalGrid)
+    // Create an element   
+    twophasetransformer: function () {
+      return this.put(new SVG.TwoPhaseTransformer)
     }
-
   }
 })
 
-// wraz z przenoszeniem elementu przenos polilinie
-function makeDraggableConnection (firstObject, secondObject, polyline) {
-
-  // w przypadku rotacji zmieniaj polozenie polilinii
-  firstObject.on('rotated', function () {
-    // wez aktualne koordynaty polilinii
-    points = polyline.attr('points')
-
-    // utworz macierz z punktow
-    pointArray = points.split(' ')
-
-    var array = []
-    var punkt = {}
-
-    for (i = 0; i < pointArray.length; i++) {
-      punkt = pointArray[i].split(',')
-      array[i] = punkt
-    }
-
-    // okresl pozycje wezla wewnatrz grupy
-    this.each(function (i, children) {
-      if (this.type == 'circle') {
-        nodeX = this.attr('cx') // nodeX = 10
-        nodeY = this.attr('cy') // nodeY = 18
-        nodeR = this.attr('r')
-      }
-    })
-
-    var rotationCorrectionX,
-      rotationCorrectionY
-
-    if (Math.round(this.transform('rotation')) == 90) {
-      rotationCorrectionX = nodeR - this.bbox().width / 2
-      rotationCorrectionY = this.bbox().height / 2
-    }
-    if (Math.round(this.transform('rotation')) == -180) {
-      rotationCorrectionX = 0
-      rotationCorrectionY = -this.bbox().height + nodeR
-    }
-    if (Math.round(this.transform('rotation')) == -90) {
-      rotationCorrectionX = this.bbox().width / 2 - nodeR
-      rotationCorrectionY = nodeR / 2 - this.bbox().height / 2
-    }
-    if (Math.round(this.transform('rotation')) == 0) {
-      rotationCorrectionX = 0
-      rotationCorrectionY = 0
-    }
-
-    // zmien wspolrzedna x z pierwszego punktu polilinii
-    // dla grupy: array[0][0] = matrix.extract().x + nodeX
-    array[0][0] = this.attr('x') + nodeX + rotationCorrectionX
-
-    // zmien wspolrzedna y z pierwszego punktu polilinii
-    // dla grupy: array[0][0] = matrix.extract().y + nodeY
-    array[0][1] = this.attr('y') + nodeY + rotationCorrectionY
-
-
-    // aktualizuj polilinie
-    polyline.plot(array)
-  })
-
-  // w przypadku rotacji zmieniaj polozenie polilinii
-  secondObject.on('rotated', function () {
-    // wez aktualne koordynaty polilinii
-    points = polyline.attr('points')
-
-    // utworz macierz z punktow
-    pointArray = points.split(' ')
-
-    var array = []
-    var punkt = {}
-
-    for (i = 0; i < pointArray.length; i++) {
-      punkt = pointArray[i].split(',')
-      array[i] = punkt
-    }
-
-    // okresl pozycje wezla wewnatrz grupy
-    this.each(function (i, children) {
-      if (this.type == 'circle') {
-        nodeX = this.attr('cx')
-        nodeY = this.attr('cy')
-        nodeR = this.attr('r')
-      }
-    })
-
-    var rotationCorrectionX,
-      rotationCorrectionY
-
-    if (Math.round(this.transform('rotation')) == 90) {
-      rotationCorrectionX = nodeR - this.bbox().width / 2
-      rotationCorrectionY = nodeR - this.bbox().height / 2
-    }
-    if (Math.round(this.transform('rotation')) == -180) {
-      rotationCorrectionX = 0
-      rotationCorrectionY = -this.bbox().height + 2 * nodeR
-    }
-    if (Math.round(this.transform('rotation')) == -90) {
-      rotationCorrectionX = this.bbox().width / 2 - nodeR
-      rotationCorrectionY = nodeR - this.bbox().height / 2
-    }
-    if (Math.round(this.transform('rotation')) == 0) {
-      rotationCorrectionX = 0
-      rotationCorrectionY = 0
-    }
-
-    // zmien wspolrzedna x z pierwszego punktu polilinii
-    // dla grupy: array[0][0] = matrix.extract().x + nodeX
-    array[array.length - 1][0] = this.attr('x') + nodeX + rotationCorrectionX
-
-    // zmien wspolrzedna y z pierwszego punktu polilinii
-    // dla grupy: array[0][0] = matrix.extract().y + nodeY
-    array[array.length - 1][1] = this.attr('y') + nodeY + rotationCorrectionY
-
-    // aktualizuj polilinie
-    polyline.plot(array)
-  })
-
-  // przenos pierwszy element z polilinia
-  firstObject.on('dragmove', function (e) {
-
-    // wez aktualne koordynaty polilinii
-    points = polyline.attr('points')
-
-    // utworz macierz z punktow
-    pointArray = points.split(' ')
-
-    var array = []
-    var punkt = {}
-
-    for (i = 0; i < pointArray.length; i++) {
-      punkt = pointArray[i].split(',')
-      array[i] = punkt
-    }
-
-    // okresl pozycje wezla wewnatrz grupy
-    this.each(function (i, children) {
-      if (this.type == 'circle') {
-        nodeX = this.attr('cx')
-        nodeY = this.attr('cy')
-        nodeR = this.attr('r')
-      }
-    })
-
-    var rotationCorrectionX,
-      rotationCorrectionY
-
-    if (Math.round(this.transform('rotation')) == 90) {
-      rotationCorrectionX = nodeR - this.bbox().width / 2
-      rotationCorrectionY = -this.bbox().height / 2
-    }
-    if (Math.round(this.transform('rotation')) == -180) {
-      rotationCorrectionX = 0
-      rotationCorrectionY = -this.bbox().height + nodeR
-    }
-    if (Math.round(this.transform('rotation')) == -90) {
-      rotationCorrectionX = this.bbox().width / 2 - nodeR
-      rotationCorrectionY = nodeR / 2 - this.bbox().height / 2
-    }
-    if (Math.round(this.transform('rotation')) == 0) {
-      rotationCorrectionX = 0
-      rotationCorrectionY = 0
-    }
-
-    // zmien wspolrzedna x z pierwszego punktu polilinii
-    // dla grupy: array[0][0] = matrix.extract().x + nodeX
-    array[0][0] = this.attr('x') + nodeX + rotationCorrectionX
-
-    // zmien wspolrzedna y z pierwszego punktu polilinii
-    // dla grupy: array[0][0] = matrix.extract().y + nodeY
-    array[0][1] = this.attr('y') + nodeY + rotationCorrectionY
-
-    // aktualizuj polilinie
-    polyline.plot(array)
-  })
-
-  // przenos drugi element z polilinia
-  secondObject.on('dragmove', function (e) {
-
-    // wez aktualne koordynaty polilinii
-    points = polyline.attr('points')
-
-    // utworz macierz z punktow
-    pointArray = points.split(' ')
-
-    var array = []
-    var punkt = {}
-
-    for (i = 0; i < pointArray.length; i++) {
-      punkt = pointArray[i].split(',')
-      array[i] = punkt
-    }
-
-    // okresl pozycje wezla wewnatrz grupy
-    this.each(function (i, children) {
-      if (this.type == 'circle') {
-        nodeX = this.attr('cx')
-        nodeY = this.attr('cy')
-        nodeR = this.attr('r')
-      }
-    })
-
-    var rotationCorrectionX,
-      rotationCorrectionY
-    console.log('nodeR: ' + nodeR)
-
-    if (Math.round(this.transform('rotation')) == 90) {
-      rotationCorrectionX = nodeR - this.bbox().width / 2
-      rotationCorrectionY = nodeR - this.bbox().height / 2
-    }
-    if (Math.round(this.transform('rotation')) == -180) {
-      rotationCorrectionX = 0
-      rotationCorrectionY = -this.bbox().height + 2 * nodeR
-    }
-    if (Math.round(this.transform('rotation')) == -90) {
-      rotationCorrectionX = this.bbox().width / 2 - nodeR
-      rotationCorrectionY = nodeR - this.bbox().height / 2
-    }
-    if (Math.round(this.transform('rotation')) == 0) {
-      rotationCorrectionX = 0
-      rotationCorrectionY = 0
-    }
-
-    // zmien wspolrzedna x z ostatniego punktu polilinii
-    // dla grupy: array[array.length-1][0] = matrix.extract().x + nodeX
-    array[array.length - 1][0] = this.attr('x') + nodeX + rotationCorrectionX
-
-    // zmien wspolrzedna y z ostatniego punktu polilinii
-    // dla grupy: array[array.length-1][0] = matrix.extract().x + nodeX
-    array[array.length - 1][1] = this.attr('y') + nodeY + rotationCorrectionY
-
-    // aktualizuj polilinie
-    polyline.plot(array)
-  })
-}
-
-// utworz JSONA do wyswietlania w konsoli
-function simpleStringify (object) {
-  var simpleObject = {}
-  for (var prop in object) {
-    if (!object.hasOwnProperty(prop)) {
-      continue
-    }
-    if (typeof (object[prop]) == 'object') {
-      continue
-    }
-    if (typeof (object[prop]) == 'function') {
-      continue
-    }
-    simpleObject[prop] = object[prop]
-  }
-  return JSON.stringify(simpleObject) // returns cleaned up JSON
-}
-
-function showCustomMenuExtGrid (object, offsetX, offsetY) {
-  $('.custom-menu').hide()
-
-  // jesli element jest w grupie przenoszonych 
-  if (object.parent().attr('id') == 'draggableNested') {
-
-    // nic nie rob
-
-  }else {
-    $('.custom-menu').show().css({
-      left: offsetX,
-      top: offsetY
-    })
-
-    // ustawiam abym wiedzial ktory element mam wykorzystywac w funkcjach rotate, delete itd.
-    $('.custom-menu').attr('data', object)
-  }
-}
-
-var doubleClickExternalGrid = function (ev) {
-
-  // formularz do wpisywania danych
-  element = document.getElementById('externalgridform')
-  element.style.display = 'block' // show
-  element.style.left = ev.offsetX + 'px'
-  element.style.top = ev.offsetY + 'px'
-
-  // ustawiam abym wiedzial ktory element mam wykorzystywac w zapisywaniu danych formularza
-  $('#externalgridform').attr('data', SVG.get(ev.target.id).parent().attr('id'))
-
-  // jesli nie jest nacisniety shift
-  if (this.attr('class') == 'noshift') {
-    var elements = SVG.get('svgArea').select('svg')
-    // wszystkie inne elementy odznacz jesli sa zaznaczone
-    elements.each(function () {
-      if (this.attr('attr') == 'selected') {
-        console.log('zmiana na unselected')
-        this.attr({
-          attr: 'unselected',
-          opacity: 1
-        })
-      }
-    })
-  }
-
-  console.log('zmiana na selected')
-  // zaznacz klikniety element 
-  this.attr({
-    attr: 'selected',
-    opacity: 0.5
-  })
-}
-
-var mouseoverNode = function (ev) {
-  if (this.attr('class') == 'free') {
-    this.animate({
-      duration: '0.1s',
-      ease: '>',
-      delay: '0.1s'
-    }).attr({
-      fill: 'green',
-      stroke: 'green',
-    //  r: radius * 2
-    })
-  }else {
-    this.animate({
-      duration: '0.1s',
-      ease: '>',
-      delay: '0.1s'
-    }
-
-    ).attr({
-      fill: 'red',
-      stroke: 'red',
-    // r: radius * 2     
-    })
-  }
-}
-
-var mouseoutNode = function (ev) {
-  this.animate({
-    duration: '0.1s',
-    ease: '>',
-    delay: '0.1s'
-  }).attr({
-    fill: 'black',
-    stroke: 'black',
-  // r: radius 
-  })
-}
-
-drawAction = false
-var clickNodeInExternalGrid = function (ev) {
-  var gridSize = 10
-
-
-  // console.log('ev.target.parent():')
-  // console.log(ev.target.parent())
-
-
-  // console.log(ev.target)
-  var thisNode = this // bylo this
-
-  // nacisnelismy pierwszy wezel i rysujemy
-  if (this.attr('class') == 'free' && drawAction == false) {
-    firstObject = thisNode.parent()
-
-    drawAction = true
-
-    // ustaw wezel jako zajety
-    this.attr('class', 'busy')
-
-    // rozpocznij polilinie          
-    polyline = SVG.get('svgArea').polyline([nodePosition(thisNode).x - nodePosition(thisNode).x % gridSize , nodePosition(thisNode).y - nodePosition(thisNode).y % gridSize]).fill('none').stroke({
-      width: 1,
-    // fill: 'red'
-    })
-
-    // w nazwie polilinii bedzie znajdowac sie nazwa elementu
-    polyline.attr('id', firstObject.attr('id'))
-
-    polylineId = polyline.attr('id')
-
- 
-    polyline.stylePolyline()
-
-    // setup a variable to store our last position
-    var last_position = {}
-    console.log('ev.offsetX' + ev.offsetX)
-    // set the new last position to the current for next time        
-    last_position = {
-      x: nodePosition(thisNode).x, // ev.offsetX - ev.offsetX % gridSize,
-      y: nodePosition(thisNode).y // ev.offsetY - ev.offsetY % gridSize
-    }
-
-    // okresl poczatkowy punk
-
-    line = drawOrthoLine((last_position.x - last_position.x % gridSize) , (last_position.y - last_position.y % gridSize) , nodePosition(thisNode).x , nodePosition(thisNode).y, nodePosition(thisNode).x , nodePosition(thisNode).y)
-
-    $('#svgArea').on('mousemove', function (e) {
-      line.updateEnd(last_position.x , last_position.y, e.offsetX, e.offsetY)
-    })
-
-    $('#svgArea').on('mousedown', function (e) {
-
-
-      // aktualizuj polilinie
-      points = polyline.attr('points')
-
-
-
-      if (typeof (last_position.x) != 'undefined') {
-        // get the change from last position to this position
-        var deltaX = last_position.x - e.offsetX,
-          deltaY = last_position.y - e.offsetY
-
-        // check which direction had the highest amplitude and then figure out direction by checking if the value is greater or less than zero
-        if (Math.abs(deltaX) > Math.abs(deltaY) && deltaX > 0) {
-          // left              
-          endX = e.offsetX - e.offsetX % gridSize
-          endY = last_position.y - last_position.y % gridSize // - last_position.y % gridSize 
-        } else if (Math.abs(deltaX) > Math.abs(deltaY) && deltaX < 0) {
-          // right              
-          endX = e.offsetX - e.offsetX % gridSize
-          endY = last_position.y - last_position.y % gridSize // - last_position.y % gridSize 
-        } else if (Math.abs(deltaY) > Math.abs(deltaX) && deltaY > 0) {
-          // up              
-          endX = last_position.x - last_position.x % gridSize // - last_position.x  % gridSize 
-          endY = e.offsetY - e.offsetY % gridSize
-        } else if (Math.abs(deltaY) > Math.abs(deltaX) && deltaY < 0) {
-          // down          
-          endX = last_position.x - last_position.x % gridSize // - last_position.x  % gridSize 
-          endY = e.offsetY - e.offsetY % gridSize
-        }
-      }
-
-      // points += ' ' + e.offsetX + ',' + e.offsetY
-      points += ' ' + endX + ',' + endY
-      polyline.attr('points', points)
-
-      // aktualizuj linie
-      line = drawOrthoLine((last_position.x - last_position.x % gridSize)  , (last_position.y - last_position.y % gridSize), endX, endY, endX, endY)
-
-      last_position = {
-        x: endX,
-        y: endY
-      }
-    })
-
-    document.addEventListener('keydown', function (e) {
-
-      // jesli jestesmy podczas rysowania
-      if (drawAction == true) {
-
-
-        // ESCAPE key pressed
-        if (e.keyCode == 27) {
-          $('#svgArea').off('mousemove')
-          $('#svgArea').off('mousedown')
-
-          // SVG.get(polylineID).remove()            
-
-          // okresl jako usuniety zeby nie reagowal w mutationObserver
-          polyline.attr('attr', 'removed')
-
-          // usun rysowana polilinie
-          polyline.remove()
-
-          // usun linie
-          lineSet = SVG.get('svgArea').select('line')
-          // usun wszystkie linie
-          lineSet.each(function (i, children) {
-            this.remove()
-          })
-
-          // zmien klase wezla
-          thisNode.attr('class', 'free')
-          drawAction = false
-        }
-      }
-    })
-  }
-
-  // nacisnelismy drugi wezel
-  if (this.attr('class') == 'free' && drawAction == true) {
-    secondObject = thisNode.parent()
-    // do wezla dochodzi linia ustaw wezel jako zajety
-    this.attr('class', 'busy')
-
-    // w nazwie polilinii bedzie znajdowac sie nazwa elementu
-    firstObjectId = polyline.attr('id')
-    secondObjectId = secondObject.attr('id')
-    polylineId = firstObjectId + '_' + secondObjectId
-    polyline.attr('id', polylineId)
-
-
-    // skoncz rysowanie
-    drawAction = false
-
-    // aktualizuj polilinie
-    points = polyline.attr('points')
-    points += ' ' + nodePosition(thisNode).x + ',' + nodePosition(thisNode).y
-    polyline.attr('points', points)
-
-    // utworz tło polilinii żeby łatwo sie klikalo
-    var clonedPolyline = polyline.clone()
-
-    // przypisz do tła polilinii prawy przycisk          
-    clonedPolyline.contextMenu()
-
-    clonedPolyline.attr({
-      'id': polyline.attr('id'),
-     // 'pointer-events': 'all',
-     // 'stroke': 'yellow',
-      'stroke-width': 8,
-     // 'fill': 'black',
-      'opacity': 0
-
-    })
-
-    
-    clonedPolyline.click(function () {
-      alert('kliknalem')
-    }) 
-
-    // wykasuj wszystkie pomocnicze linie ktore zostaly narysowane
-    lineSet = SVG.get('svgArea').select('line')
-    lineSet.each(function () {
-      this.remove()
-    })
-
-    // przestajemy rysować polilinię
-    $('#svgArea').off('mousemove')
-    $('#svgArea').off('mousedown')
-
-
-
-
-    // przy przenoszeniu polaczonych elementow polilinia powinna sie zmieniac
-    makeDraggableConnection(firstObject, secondObject, polyline)
-  }
-}
-
-var rightClick = function (ev) {
-  ev.preventDefault()
-  showCustomMenuExtGrid(this, ev.offsetX, ev.offsetY)
-}
-
-*/
 ;
 //# sourceMappingURL=scripts.bundle.js.map

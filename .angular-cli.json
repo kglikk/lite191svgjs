@@ -28,12 +28,14 @@
       
         "../node_modules/svg.draggable.js/dist/svg.draggable.min.js", 
         "../src/assets/js/functions.js",
+        
+        "../src/assets/ts/objects.ts",
+
         "../src/assets/js/busbar.js",
         "../src/assets/js/externalgrid.js",
+        "../src/assets/js/load.js",
         "../src/assets/js/polyline.js",
-        "../src/assets/js/transformer.js"       
-
-        
+        "../src/assets/js/twophasetransformer.js"    
 
       ],
       "environmentSource": "environments/environment.ts",

@@ -9,4 +9,5 @@ export interface TwoPhaseTransformers {
     loadLossesRated: number;
     shortCircuitVoltage: number;
     projectId: number
+    svgXML: string;
 }

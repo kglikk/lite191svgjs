@@ -87,9 +87,7 @@ namespace lite191svgjs.Models
             {
                 context.OverheadLines.Add(s);
             }
-            context.SaveChanges();
-
-            
+            context.SaveChanges();            
             
             var linesGlobal = new LineGlobal[]
             {

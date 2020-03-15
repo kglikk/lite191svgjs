@@ -7,7 +7,7 @@ import 'rxjs/add/operator/map';
 @Injectable()
 export class ShowDataService {
 
-   
+      
   private showState = new BehaviorSubject<boolean>(false);
   currentShow = this.showState.asObservable();
 

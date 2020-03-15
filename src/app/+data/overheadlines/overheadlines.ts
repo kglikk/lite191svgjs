@@ -9,4 +9,5 @@ export interface OverheadLines {
     unitaryReactance: number;
     unitaryCapacitance: number;
     projectId: number
+    svgXML: string;
 }

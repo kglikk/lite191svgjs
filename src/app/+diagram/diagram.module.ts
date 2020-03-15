@@ -6,8 +6,10 @@ import {SmartadminModule} from "../shared/smartadmin.module";
 import {DiagramComponent} from "./diagram.component";
 
 import { ExternalGridFormComponent } from './../components/externalgrid-form/externalgrid-form.component';
-
-
+import {LoadFormComponent} from './../components/load-form/load-form.component';
+import {TwoPhaseTransformerFormComponent} from './../components/twophasetransformer-form/twophasetransformer-form.component';
+ 
+   
 @NgModule({
   imports: [
     CommonModule,
@@ -15,6 +17,6 @@ import { ExternalGridFormComponent } from './../components/externalgrid-form/ext
       SmartadminModule,
       ReactiveFormsModule
   ],
-  declarations: [DiagramComponent, ExternalGridFormComponent ]
+  declarations: [DiagramComponent, ExternalGridFormComponent, LoadFormComponent, TwoPhaseTransformerFormComponent]
 })
 export class DiagramModule { }

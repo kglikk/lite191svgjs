@@ -20,12 +20,12 @@ SVG.ExternalGrid = SVG.invent({
 
     //przypisanie elementowi odpowiedniej metody
     this.on('dblclick', doubleClickExternalGrid)
-    this.on('contextmenu', contextMenuExternalGrid)
+    this.on('contextmenu', contextMenu)
 
     //przypisanie wezlom odpowiednich metod  
     this.select('circle').on('mouseover', mouseoverNode)
     this.select('circle').on('mouseout', mouseoutNode)
-    this.select('circle').on('click', clickNodeInExternalGrid)
+    this.select('circle').on('click', clickNode)
 
     // przenos element w obszarze modelowania - svgArea
     var gridSize = 10

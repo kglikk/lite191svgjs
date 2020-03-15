@@ -1,4 +1,5 @@
 import { ExternalGrids } from './../+data/externalgrids/externalgrids';
+import {Loads} from './../+data/loads/loads';
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { ProjectService } from './../services/project.service';
 import { AuthService } from './../services/auth/auth.service';
@@ -7,6 +8,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ShowDataService } from "../services/show-data.service";
 import { SvgAreaService } from "../services/svgarea.service";
 
+ 
 declare const SVG: any; //tells typescript that the import does really exist but you just can't know it because you didn't find the definition types file
 declare const mutationObserver: any;
 declare const $: any;
@@ -39,7 +41,6 @@ export class DiagramComponent implements OnInit, OnDestroy {
     this.showData.currentShow.subscribe(show => this.show = true);
   }
 
-
   ngOnInit() {
 
     //obserwuj ID projektu, który jest otwarty, żeby na tej podstawie wczytywać dane
@@ -63,20 +64,22 @@ export class DiagramComponent implements OnInit, OnDestroy {
 
       //utworz obiekt ktory bedzie przenoszony
       var draggableNested = paper.nested()
-      draggableNested.attr('id', 'draggableNested')
-      draggableNested.attr('viewbox', '0 0 100% 100%')
-      draggableNested.attr('x', '0')
-      draggableNested.attr('y', '0')
+      draggableNested.attr({
+        id: 'draggableNested'
+      , viewbox: '0 0 100% 100%'
+      , 'x': 0
+      , 'y': 0
+      })     
 
       contextmenuFunction() //wylacz reakcje svgArea na prawy przycisk
-      clickSVGArea()
+      clickSVGArea()   
       selectMultipleGroups()
       selectShift() //zaznaczaj elementy przy nacisnietym Shift
 
     }
-  }
-
-  ngOnDestroy() {
+  }        
+   
+  ngOnDestroy() {  
 
     //jesli jest wybrany projekt
     if (this.show != false) {
@@ -86,8 +89,8 @@ export class DiagramComponent implements OnInit, OnDestroy {
     document.removeEventListener('keydown', keydownshift)
     document.removeEventListener('keyup', keyupshift)
   }
-
-
+   
+      
   // rozpoczęcie przenoszenia danego elementu do szarego obszaru 'svgArea'
   dragstart_handler(ev) {
     // Add the target element's id to the data transfer object
@@ -96,21 +99,20 @@ export class DiagramComponent implements OnInit, OnDestroy {
     // przenoś tylko svg, który jest dzieckiem div-a. Drag nie działa w HTML5 jeśli chciałbym przenosić bezpośrednio obiekt svg.
     ev.dataTransfer.setData('text/plain', $(ev.target).children().attr('id'))
   }
-
+ 
   // wykonanie operacji przy upuszczeniu danego elementu
   drop_handler(ev) {
     ev.preventDefault()
 
     // klasa przenoszonego elementu DIV
-    var idDataSVG = ev.dataTransfer.getData('text')
+    let idDataSVG: string = ev.dataTransfer.getData('text')
+    var gridSize = 10
 
     //jesli przeniesiony obiekt to external grid
     if (idDataSVG == 'extGrid') {
 
       //utworz element oraz odpowiednio umiesc go w obszarze svgArea
-      var gridSize = 10
       var externalgrid = SVG.get('svgArea').externalgrid().center(ev.offsetX, ev.offsetY)
-
 
       //zapamietaj stan svg (pozycja i rotacja)
       var svgXML = '<svg xmlns="http://www.w3.org/2000/svg" id="schemat" attr="unselected" class="noshift" x="' + externalgrid.attr('x') + '" y="' + externalgrid.attr('y') + '" style="overflow: visible;"><d="M0,0,20,0,20,20,0,20,0,0.2,19.5,10,0,20M20,20,0.5,10,20,0" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); cursor: pointer; stroke-width: 0.5;"/><circle id="SvgjsCircle1018" r="2" cx="10" cy="18" stroke="#000000" stroke-width="0.5" class="free"/></svg>'
@@ -151,13 +153,10 @@ export class DiagramComponent implements OnInit, OnDestroy {
 
       //obserwuj zmiany
       mutationObserver(externalgrid)
-    }
- 
-
+    }    
     if (idDataSVG == 'busbar') {
 
       //utworz element oraz odpowiednio umiesc go w obszarze svgArea
-      var gridSize = 10
       var busbar = SVG.get('svgArea').busbar().center(ev.offsetX, ev.offsetY)
 
       //zapamietaj stan svg (pozycja i rotacja)
@@ -193,59 +192,92 @@ export class DiagramComponent implements OnInit, OnDestroy {
       
       //obserwuj zmiany
       mutationObserver(busbar) 
-    }
-                  
+    }                   
+    if (idDataSVG == 'twophasetransformer') {
      
-    if (idDataSVG == 'transformer') {
-
       //utworz element oraz odpowiednio umiesc go w obszarze svgArea
-      var gridSize = 10
-      var externalgrid = SVG.get('svgArea').externalgrid().center(ev.clientX - $('#' + idDataSVG).offset().left - $('.draggableDIV').parent().width() - $('.draggableDIV').width(), ev.clientY - $('.draggableDIV').parent().height() - $('.draggableDIV').height())
-
+      var twophasetransformer = SVG.get('svgArea').twophasetransformer().center(ev.offsetX, ev.offsetY)//.center(ev.clientX - $('#' + idDataSVG).offset().left - $('.draggableDIV').parent().width() - $('.draggableDIV').width(), ev.clientY - $('.draggableDIV').parent().height() - $('.draggableDIV').height())
+           
       //zapamietaj stan svg (pozycja i rotacja)
-      var svgXML = '<svg xmlns="http://www.w3.org/2000/svg" id="schemat" attr="unselected" class="noshift" x="' + externalgrid.attr('x') + '" y="' + externalgrid.attr('y') + '" style="overflow: visible;"><path id="SvgjsPath1017" d="M0,0,20,0,20,20,0,20,0,0.2,19.5,10,0,20M20,20,0.5,10,20,0" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); cursor: pointer; stroke-width: 0.5;"/><circle id="SvgjsCircle1018" r="2" cx="10" cy="18" stroke="#000000" stroke-width="0.5" class="free"/></svg>'
-
+      var svgXML = '<svg xmlns="http://www.w3.org/2000/svg" id="schemat" attr="unselected" class="noshift" x="' + twophasetransformer.attr('x') + '" y="' + twophasetransformer.attr('y') + '" style="overflow: visible;"></svg>'
+           
       var stringifiedNewItem = JSON.stringify({
         ID: 0,
         Name: 'z schematu',
         NodeNo: 0,
         NodeType: 'SL',
-        VoltageAngle: 0,
-        VoltageSetpoint: 0,
-        ActivePower: 0,
-        ReactivePower: 0,
+        RatedPower: 0,
+        HighVoltage: 0,
+        LowVoltage: 0,
         ProjectId: this.projectId,
         svgXML: svgXML
       })
     
-      this.http.post('api/ExternalGrid', stringifiedNewItem, httpOptions).subscribe(
-        extgrid => { },
+      this.http.post('api/TwoPhaseTransformer', stringifiedNewItem, httpOptions).subscribe(
+        twophasetransformer => { },
         err => { console.log(err) },
         () => {
           //przypisz ID elementowi svg      
-          this.svgAreaService.getExternalGrid().subscribe(
+          this.svgAreaService.getTwoPhaseTransformer().subscribe(
             results => {
 
               //jeśli jest już jakiś element w bazie
               if (results.length != 0) {
                 var lastElement = results[results.length - 1]
-                externalgrid.attr('id', lastElement.id)
+                twophasetransformer.attr('id', lastElement.id)
               }
             }
           )
         })
         
       //ustaw element w siatce
-      externalgrid.dmove(- externalgrid.attr('x') % gridSize, - externalgrid.attr('y') % gridSize)
-
-      //przenos element wewnatrz obszaru
-      externalgrid.dragInsideContainer()
-
-      //funkcja okreslajaca prawy przycisk
-      externalgrid.contextMenu()
+      twophasetransformer.dmove(- twophasetransformer.attr('x') % gridSize, - twophasetransformer.attr('y') % gridSize)
 
       //obserwuj zmiany
-      mutationObserver(externalgrid)
+      mutationObserver(twophasetransformer)
+    }
+    if (idDataSVG == 'load') {
+      
+      //utworz element oraz odpowiednio umiesc go w obszarze svgArea
+      var load = SVG.get('svgArea').load().center(ev.offsetX, ev.offsetY)
+
+      //zapamietaj stan svg (pozycja i rotacja)
+      var svgXML = '<svg xmlns="http://www.w3.org/2000/svg" id="schemat" attr="unselected" class="noshift" x="' + load.attr('x') + '" y="' + load.attr('y') + '" style="overflow: visible;"><d="M0,0,20,0,20,20,0,20,0,0.2,19.5,10,0,20M20,20,0.5,10,20,0" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); cursor: pointer; stroke-width: 0.5;"/><circle id="SvgjsCircle1018" r="2" cx="10" cy="18" stroke="#000000" stroke-width="0.5" class="free"/></svg>'
+
+      //wpisz do bazy danych
+      var stringifiedNewItem = JSON.stringify({
+        ID: 0,
+        Name: 'z schematu',
+        NodeNo: 0,
+        ActivePower: 0,
+        ReactivePower: 0,
+        RatedVoltage:0,
+        ProjectId: this.projectId,
+        svgXML: svgXML
+      })
+
+      this.http.post('api/Load', stringifiedNewItem, httpOptions).subscribe(
+        load => { },
+        err => { console.log(err) },
+        () => {
+          //przypisz ID elementowi svg      
+          this.svgAreaService.getLoad().subscribe(
+            results => {
+
+              //jeśli jest już jakiś element w bazie
+              if (results.length != 0) {
+                var lastElement = results[results.length - 1]
+                load.attr('id', lastElement.id)
+              }
+            }
+          )
+        })
+
+      //ustaw element w siatce
+      load.dmove(- load.attr('x') % gridSize, - load.attr('y') % gridSize)
+
+      //obserwuj zmiany
+      mutationObserver(load)
     }
   }
      
@@ -273,7 +305,7 @@ export class DiagramComponent implements OnInit, OnDestroy {
       rotatedObject.fire('rotated')
 
       //obroc kazdy element w svg nested
-      rotatedObject.each(function (i, children) {
+      rotatedObject.each(function (i: any, children: any) {
         this.rotate(90, rotationCenterX, rotationCenterY)
       })
 
@@ -281,7 +313,7 @@ export class DiagramComponent implements OnInit, OnDestroy {
     if (Math.round(t.rotation) == 90) {
       rotatedObject.transform({ rotation: -180 })
       rotatedObject.fire('rotated')
-      rotatedObject.each(function (i, children) {
+      rotatedObject.each(function (i: any, children: any) {
         this.rotate(-180, rotationCenterX, rotationCenterY)
       })
 
@@ -291,7 +323,7 @@ export class DiagramComponent implements OnInit, OnDestroy {
       rotatedObject.transform({ rotation: -90 })
       rotatedObject.fire('rotated')
 
-      rotatedObject.each(function (i, children) {
+      rotatedObject.each(function (i: any, children: any) {
         this.rotate(-90, rotationCenterX, rotationCenterY)
       })
 
@@ -301,7 +333,7 @@ export class DiagramComponent implements OnInit, OnDestroy {
       rotatedObject.transform({ rotation: 0 })
       rotatedObject.fire('rotated')
 
-      rotatedObject.each(function (i, children) {
+      rotatedObject.each(function (i: any, children: any) {
         this.rotate(0, rotationCenterX, rotationCenterY)
       })
     }
@@ -335,7 +367,7 @@ export class DiagramComponent implements OnInit, OnDestroy {
       SVG.get(idElement).remove()
       $('.custom-menu').hide();
     })
-  }
+  } 
 
   //usuń polilinia
   deletePolyline() {
@@ -380,11 +412,11 @@ export class DiagramComponent implements OnInit, OnDestroy {
 
     //okresl jako usuniety zeby nie reagowal w mutationObserver
     SVG.get(idElement).attr('attr', 'removed')
-
+ 
       //usuń węzeł szyny związany z polinią
-      var nodeId = SVG.get(idElement).attr('nodeId')
-      if (nodeId != undefined) {
-        SVG.get(nodeId).remove()
+      var busbarNode = SVG.get(idElement).attr('busbarNode')
+      if (busbarNode != undefined) {
+        SVG.get(busbarNode).remove()
       }
 
     //usun element z frontend (dwa razy bo jest polilinia i tlo)
@@ -420,7 +452,6 @@ export class DiagramComponent implements OnInit, OnDestroy {
 
   }
  
-
   //usun wszystkie elementy zaznaczone 
   deleteObjectsInDraggableNested() {
 
@@ -432,22 +463,22 @@ export class DiagramComponent implements OnInit, OnDestroy {
       //jeśli usuwasz polilinię to usuń też węzły na szynie, które są powiązane z tą polilinią
       if(this.type == 'polyline' && this.attr('data') == 'background'){
         //usuwaj jeśli jest to półączenie z szyną
-        if(this.attr('nodeId') != undefined) {
+        if(this.attr('busbarNode') != undefined) {
 
           //i węzeł nie został wcześniej usunięty przy grupowym usuwaniu
-          if(SVG.get(this.attr('nodeId')) != null)
+          if(SVG.get(this.attr('busbarNode')) != null)
           {
-            SVG.get(this.attr('nodeId')).remove()
+            SVG.get(this.attr('busbarNode')).remove()
           }          
         }         
-      }
+      } 
       //przepisz wartosci id elementow do tablicy żeby usunąć w następnym kroku z back-end
       elementArray.push(this.attr('id'))
       this.attr('attr', 'removed')
       this.remove()
     })
 
-
+ 
     this.http.get<ExternalGrids[]>('api/ExternalGrid/GetBasedOnProject/' + this.projectId).subscribe(
       extgrids => {
         elementArray.forEach(extGridId => {
@@ -471,13 +502,12 @@ export class DiagramComponent implements OnInit, OnDestroy {
     // Set the dropEffect to move
     ev.dataTransfer.dropEffect = 'move'
   }
-}
- 
+} 
 
 //gdy nacisniesz prawy przycisk w svgArea
 function contextmenuFunction() { 
 
-  $('#svgArea').contextmenu(function (ev) {  
+  $('#svgArea').contextmenu(function (ev: { target: { nodeName: string; }; }) {  
     //ev.preventDefault()
     
 
@@ -548,9 +578,9 @@ function contextmenuFunction() {
   })
 }
 
-
+//kliknięcie obszaru svgarea
 function clickSVGArea() {
-  $('#svgArea').click(function (ev) {
+  $('#svgArea').click(function (ev: any) {
 
     $('.custom-menu').hide()
 
@@ -572,14 +602,14 @@ function selectMultipleGroups() {
   // group that will receive the selected items
   var selections = paper.set()
 
-  var box
+  var box: { attr: { (arg0: string, arg1: string): number; (arg0: string, arg1: string): number; (arg0: string, arg1: any): number; (arg0: string, arg1: any): number; (arg0: string, arg1: any): number; (arg0: string, arg1: number): number; (arg0: string, arg1: number): number; (arg0: string, arg1: any): number; (arg0: string, arg1: number): number; (arg0: string, arg1: number): number; (arg0: string, arg1: any): number; (arg0: string, arg1: any): number; (arg0: string, arg1: number): number; (arg0: string, arg1: number): number; (arg0: string, arg1: number): number; (arg0: string, arg1: number): number; (arg0: string): number; (arg0: string): string | number; (arg0: string): string | number; (arg0: string): void; (arg0: string): string | number; (arg0: string): string | number; (arg0: string, arg1: string): number; }; remove: () => void; }
   var ox = 0 //punkt poczatkowy
   var oy = 0
   var dx = 0 //zmiana pozycji
   var dy = 0
 
   //rysowanie obszaru zaznaczania
-  paper.on('mousedown', function (e) {
+  paper.on('mousedown', function (e: { target: { getBoundingClientRect: () => void; }; offsetX: number; offsetY: number; }) {
 
     //usun wezly do przenoszenia polilinii
     SVG.get('svgArea').select('circle').each(function () {
@@ -601,7 +631,7 @@ function selectMultipleGroups() {
     ox = e.offsetX
     oy = e.offsetY
 
-    paper.on('mousemove', function (e) {
+    paper.on('mousemove', function (e: { offsetX: number; offsetY: number; }) {
 
       dx = e.offsetX - ox
       dy = e.offsetY - oy
@@ -636,14 +666,16 @@ function selectMultipleGroups() {
       }
     })
 
-    paper.on('mouseup', function (e) {
+    paper.on('mouseup', function (e: any) {
       //e.preventDefault
       //wszystie elementy svg w obszarze svgArea
       var elements = SVG.get('svgArea').select('svg')//SVG.get('svgArea').select('svg')
       var polylines = SVG.get('svgArea').select('polyline') // elements.add(SVG.get('svgArea').select('polyline'))
 
       //  elements.Add(SVG.get('svgArea').select('polyline'))
-      var xMinSelect = box.attr('x')
+      var xMinSelect: number =  box.attr('x')
+
+
       var xMaxSelect = box.attr('x') + box.attr('width')
       var yMinSelect = box.attr('y')
       var yMaxSelect = box.attr('y') + box.attr('height')
@@ -688,7 +720,6 @@ function selectShift() {
 
   // jeśli naciśnięty jest shift to wszystkie elementy w svgArea otrzymują attrybut selectableShift
   document.addEventListener('keydown', keydownshift)
-
 
   document.addEventListener('keyup', keyupshift)
 

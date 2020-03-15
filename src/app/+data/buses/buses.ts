@@ -4,5 +4,6 @@ export interface Buses {
     nodeNo: number;
     nominalVoltage: number;
     projectId: number
+    svgXML: string;
   }
   

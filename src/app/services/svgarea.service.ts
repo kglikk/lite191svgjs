@@ -8,7 +8,9 @@ import { Injectable } from '@angular/core';
 
 import { getExternalGridObservables } from './../observables/observables.ts'
 import { concatMap, tap } from 'rxjs/operators';
-
+import { TwoPhaseTransformers } from 'app/+data/twophasetransformers/twophasetransformers';
+import { Loads } from 'app/+data/loads/loads';
+ 
 declare const SVG: any;
 declare const $: any;
 declare const doubleClickExternalGrid: void;
@@ -18,7 +20,7 @@ declare const clickNodeInExternalGrid: void;
 declare const rightClick: void;
 declare function mutationObserver(object): void;
 declare function insideContainer(x, y, z): any;
-
+  
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json', 'charset': 'utf-8' })
 };
@@ -28,8 +30,6 @@ const httpOptions = {
 export class SvgAreaService {
   [x: string]: any;
   private externalgrid: ExternalGrids[] = []
-
-
 
   svgElements: any
   polylineElements: any
@@ -57,7 +57,6 @@ export class SvgAreaService {
         //   var parser = new DOMParser();
         //   var xmlDoc = parser.parseFromString(object.svgXML, "text/xml");
 
-
         //wrysuj svg na schemat
         paper.svg(extgrid.svgXML)
         //console.log(wczytywanyObiekt)
@@ -65,11 +64,10 @@ export class SvgAreaService {
         //obiekt ktory wstawiles
         var wczytywanyObiekt = SVG.get('schemat')
 
-
-
         //zamien id
         wczytywanyObiekt.attr('id', extgrid.id)
-     //   wczytywanyObiekt = SVG.get(extgrid.id)
+        //wczytywanyObiekt = SVG.get(extgrid.id)
+        
         //dodaj zdarzenia do wrysowanego elementu
         wczytywanyObiekt.on('dblclick', doubleClickExternalGrid)
         wczytywanyObiekt.on('contextmenu', rightClick)
@@ -88,6 +86,44 @@ export class SvgAreaService {
         mutationObserver(wczytywanyObiekt) //obserwuj zmiany
       })
     })
+
+    this.getTwoPhaseTransformer().subscribe(twophasetransformer => {
+ 
+      twophasetransformer.forEach((twophasetr) => {
+        //   var parser = new DOMParser();
+        //   var xmlDoc = parser.parseFromString(object.svgXML, "text/xml");
+
+        //wrysuj svg na schemat
+         paper.svg(twophasetr.svgXML)
+        //console.log(wczytywanyObiekt)
+
+        //obiekt ktory wstawiles
+        var wczytywanyObiekt = SVG.get('schemat')
+
+        //zamien id
+        wczytywanyObiekt.attr('id', twophasetr.id)
+        //wczytywanyObiekt = SVG.get(extgrid.id)
+        
+        //dodaj zdarzenia do wrysowanego elementu
+        wczytywanyObiekt.on('dblclick', doubleClickExternalGrid)
+        wczytywanyObiekt.on('contextmenu', rightClick)
+        wczytywanyObiekt.select('circle').on('mouseover', mouseoverNode)
+        wczytywanyObiekt.select('circle').on('mouseout', mouseoutNode)
+        wczytywanyObiekt.select('circle').on('click', clickNodeInExternalGrid)
+
+        //przenos element wewnatrz obszaru
+        var gridSize = 10
+        wczytywanyObiekt.draggable(function (x, y) {
+          return {
+            x: insideContainer(this, x, y).x - x % gridSize,
+            y: insideContainer(this, x, y).y - y % gridSize
+          }
+        })
+        mutationObserver(wczytywanyObiekt) //obserwuj zmiany
+      })
+    })
+
+
   }
 
   //zapamietaj wszystkie elementy w svgArea i wyslij do bazy danych
@@ -123,8 +159,7 @@ export class SvgAreaService {
 
     var objectSVG = SVG.get(object.node.id)
         ,lastElement
-        ,svgXML
-     
+        ,svgXML   
 
 
     //zapamietaj stan svg (pozycja i rotacja)
@@ -234,13 +269,22 @@ export class SvgAreaService {
     );
   }
 
+  getTwoPhaseTransformer(): Observable<TwoPhaseTransformers[]> {
+
+    return this.http.get<TwoPhaseTransformers[]>('api/TwoPhaseTransformer/GetBasedOnProject/' + this.projectId)
+      .pipe(
+        tap(heroes => {
+          // console.log('fetched heroes') 
+          // console.log(heroes)
+        }),
+    );
+  }
+ 
   getBusbar(): Observable<Buses[]> {
 
     return this.http.get<Buses[]>('api/Bus/GetBasedOnProject/' + this.projectId);
   }
-
-
-  
+ 
 
   getExternalGridWithId(idElement): Observable<ExternalGrids> {
 
@@ -250,5 +294,14 @@ export class SvgAreaService {
 
   }
 
-  
+  getLoad(): Observable<Loads[]> {
+
+    return this.http.get<Loads[]>('api/Load/GetBasedOnProject/' + this.projectId)
+      .pipe(
+        tap(heroes => {
+          // console.log('fetched heroes') 
+          // console.log(heroes)
+        }),
+    );
+  }
 }

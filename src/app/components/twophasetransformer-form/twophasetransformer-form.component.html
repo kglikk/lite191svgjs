@@ -1,0 +1,37 @@
+<div id="twophasetransformerform">
+ 
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <p>
+            <label>Name:</label>
+            <input type="text" formControlName="name">
+        </p>
+        
+        <p>
+            <label>High voltage [kV]:</label>
+            <input type="number" formControlName="hvVoltageRated">
+        </p>
+        <p>
+            <label>Low voltage [kV]</label>
+            <input type="number" formControlName="lvVoltageRated">
+        </p>
+        <p>
+            <label>Apparent power [MVA]</label>
+            <input type="number" formControlName="apparentPowerRated">
+        </p>
+        <p>
+            <label>Load losses [kW]</label>
+            <input type="number" formControlName="loadLossesRated">
+        </p>
+        <p>
+            <label>Short-circuit voltage [kV]</label>
+            <input type="number" formControlName="shortCircuitVoltage">
+        </p>
+        <p>
+            <button type="submit" class="btn btn-default">Submit</button>
+            <button type="button" class="btn btn-default" (click)="cancel()">Cancel</button>
+        </p>
+    </form>
+
+
+</div>
+

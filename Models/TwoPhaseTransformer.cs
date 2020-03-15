@@ -41,8 +41,12 @@ namespace lite191svgjs.Models
         [Display(Name = "Short Circuit Voltage [%]")]
         public double ShortCircuitVoltage { get; set; }
     
-        //public Project Project {get;set;}        
+        //public Project Project {get;set;}         
 
         public int? ProjectId {get;set;} 
+
+        public string svgXML {get;set;}
+
+
     }
 }

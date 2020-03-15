@@ -25,8 +25,8 @@ export class TwoPhaseTransformersComponent implements OnInit {
     name: string
     projectId: number
     projectName: string
-    columnDefs: any[]
-
+    columnDefs: any[]      
+  
     constructor(public http: HttpClient, public showData: ShowDataService, public projectService: ProjectService) {
 
         //czy pokazywać dane czy nie w zależności od tego czy projekt jest otwarty
@@ -38,8 +38,6 @@ export class TwoPhaseTransformersComponent implements OnInit {
 
         this.projectService.currentProjectName.subscribe(projectName => this.projectName = projectName)
 
-
- 
 
         this.gridOptions = {
             onCellValueChanged: function (event) {

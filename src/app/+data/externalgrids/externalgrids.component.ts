@@ -1,4 +1,3 @@
-
 import { Observable } from 'rxjs/Observable';
 //import { XLSX } from 'xlsx';
 import * as XLSX from 'xlsx';
@@ -78,8 +77,6 @@ export class ExternalGridsComponent implements OnInit {
       rowSelection: 'multiple',
       //rowDragManaged: true,
 
-
-
       defaultColDef: {
         //enableCellChangeFlash: true,
 
@@ -90,12 +87,7 @@ export class ExternalGridsComponent implements OnInit {
         // make every column use 'text' filter by default
         filter: 'text'
       },
-
     }
-
-
-
-
   }
   ngOnInit() {
 
@@ -103,7 +95,6 @@ export class ExternalGridsComponent implements OnInit {
     this.http.get('api/ExternalGrid/GetBasedOnProject/' + this.projectId).subscribe(
       result => { this.rowData = result }
     );
-
 
     //tabela externalgrid zalezy takze od elementow Bus
     this.http.get<Buses[]>('api/Bus/GetBasedOnProject/' + this.projectId).subscribe(
@@ -169,8 +160,6 @@ export class ExternalGridsComponent implements OnInit {
 
 
   }
-
-
 
 
   onGridReady(params) {
@@ -387,11 +376,6 @@ export class ExternalGridsComponent implements OnInit {
   getExternalGrid(): Observable<ExternalGrids[]> {    
     return this.http.get<ExternalGrids[]>('api/ExternalGrid/GetBasedOnProject/' + this.projectId)
   }
-
-
-
-
-
 
   // pull out the values we're after, converting it into an array of rowData
   populateGrid(workbook) {
