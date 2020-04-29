@@ -69,7 +69,7 @@
     "he": "1.1.1",
     "highcharts": "6.0.3",
     "ion-rangeslider": "2.2.0",
-    "jquery": "3.2.1",
+    "jquery": "3.5.0",
     "jquery-color": "git+https://github.com/jquery/jquery-color.git",
     "jquery-jcrop": "0.9.13",
     "jquery-knob": "1.2.11",
